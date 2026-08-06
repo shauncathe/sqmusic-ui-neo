@@ -705,7 +705,7 @@
   };
   const taskStatus = s => TASK_STATUS[s] || ['', s || '未知'];
 
-  const search = { kind: 'song', plug: 'ALL', keyword: '', pageIndex: 1, pageSize: 20, total: 0, records: [], loading: false, requestId: 0 };
+  const search = { kind: 'artist', plug: 'ALL', keyword: '', pageIndex: 1, pageSize: 20, total: 0, records: [], loading: false, requestId: 0 };
 
   views.search = function () {
     $('#content').innerHTML = `
