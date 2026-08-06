@@ -2,7 +2,7 @@
 
 Simple SQ Music Plus 的开源 Web 前端。单文件 `frontend/index.html`，纯 HTML/CSS/JS，**无构建步骤**，可直接部署在任意静态服务器或反向代理之后。
 
-> 本项目是第三方社区前端，与 Simple SQ Music Plus 官方无隶属关系。
+> 本项目是第三方社区前端，基于 [Simple SQ Music Plus](https://github.com/59799517/simple_sq_music_plus) 的 Web 接口开发，与原作者无隶属关系。
 
 ## 功能
 
@@ -58,6 +58,10 @@ Simple SQ Music Plus 的开源 Web 前端。单文件 `frontend/index.html`，�
 awk '/<script>/{flag=1;next}/<\/script>/{flag=0}flag' frontend/index.html > /tmp/sqmusic-frontend.js
 node --check /tmp/sqmusic-frontend.js
 ```
+
+## 相关项目
+
+- 原项目（后端）：[Simple SQ Music Plus](https://github.com/59799517/simple_sq_music_plus)
 
 ## License
 
