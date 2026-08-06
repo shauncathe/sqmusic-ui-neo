@@ -9,3 +9,7 @@
 ui-preview.html
 ui-preview*.png
 ui-*.png
+
+# README preview assets
+!ui-preview-topnav-desktop.png
+!ui-preview-topnav-mobile.png
