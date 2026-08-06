@@ -1,0 +1,2019 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173f73">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f6fed'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial' font-size='12' font-weight='700' fill='%23ffffff'%3ESQ%3C/text%3E%3C/svg%3E">
+  <title>SQMusic</title>
+  <style>
+    :root {
+      --ink: #1f2d3d;
+      --muted: #6b7d91;
+      --line: #d9e4f0;
+      --paper: #f5f8fc;
+      --panel: #ffffff;
+      --panel-soft: #fbfdff;
+      --teal: #2f6fed;
+      --teal-soft: #eaf2ff;
+      --amber: #a86e16;
+      --amber-soft: #fff5dc;
+      --red: #c2414c;
+      --red-soft: #fff0f1;
+      --green: #2f8256;
+      --green-soft: #ecf8f1;
+      --bar: #173f73;
+      --bar-ink: #dbeafe;
+      --shadow: 0 12px 30px rgba(42, 80, 128, .07);
+      color-scheme: light;
+    }
+    html[data-theme="dark"] {
+      --ink: #e6edf6;
+      --muted: #93a4bb;
+      --line: #26364c;
+      --paper: #0e1620;
+      --panel: #151f2c;
+      --panel-soft: #111a25;
+      --teal: #5b96ff;
+      --teal-soft: #16273f;
+      --amber: #e2b25c;
+      --amber-soft: #2c2415;
+      --red: #f08492;
+      --red-soft: #331b20;
+      --green: #6cc99a;
+      --green-soft: #16291f;
+      --bar: #0b1420;
+      --bar-ink: #c9dcf5;
+      --shadow: 0 12px 30px rgba(0, 0, 0, .35);
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-width: 320px; }
+    body {
+      background: var(--paper); color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--teal); }
+    [hidden] { display: none !important; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { border-radius: 4px; background: var(--line); }
+
+    /* ---------- top bar ---------- */
+    .topnav { display: flex; align-items: center; gap: 18px; min-height: 62px; padding: 8px 22px; background: var(--bar); color: var(--bar-ink); }
+    .brand { display: flex; flex: 0 0 auto; align-items: center; gap: 10px; border-right: 1px solid rgba(219,234,254,.2); padding-right: 18px; color: #fff; }
+    .brand-mark { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: #dbeafe; color: #173f73; font-weight: 800; }
+    .brand strong { display: block; font-size: 15px; }
+    .brand small { display: block; margin-top: 2px; color: #a9c6ea; font-size: 10px; }
+    .nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav button { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; border: 0; border-radius: 7px; padding: 9px 11px; background: transparent; color: #c1d7f2; font-size: 13px; white-space: nowrap; }
+    .nav button:hover { background: rgba(219,234,254,.13); color: #fff; }
+    .nav button.active { background: rgba(219,234,254,.2); color: #fff; font-weight: 650; }
+    .nav-icon { width: 16px; text-align: center; font-size: 14px; }
+    .nav-spacer { flex: 1; }
+    .top-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+    .rate { display: flex; align-items: center; gap: 8px; color: #a9c6ea; font-size: 11px; white-space: nowrap; }
+    .rate b { color: #fff; font-weight: 600; }
+    .top-btn { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid rgba(219,234,254,.24); border-radius: 7px; background: transparent; color: var(--bar-ink); font-size: 14px; }
+    .top-btn:hover { border-color: #dbeafe; color: #fff; }
+    .avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #d17859; color: #fff; font-size: 11px; font-weight: 700; }
+
+    /* ---------- layout ---------- */
+    .content { max-width: 1440px; margin: 0 auto; padding: 26px 30px 120px; }
+    .page-view { display: none; }
+    .page-view.active { display: block; animation: fade .18s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
+    h1 { margin: 0; font-size: 25px; line-height: 1.15; }
+    .subtitle { margin: 7px 0 0; color: var(--muted); font-size: 12.5px; }
+    .head-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 34px; border: 1px solid var(--line); border-radius: 7px; padding: 0 12px; background: var(--panel); color: var(--ink); font-size: 12px; font-weight: 620; white-space: nowrap; }
+    .btn:hover { border-color: var(--teal); color: var(--teal); }
+    .btn.primary { border-color: var(--teal); background: var(--teal); color: #fff; }
+    .btn.primary:hover { filter: brightness(1.08); color: #fff; }
+    .btn.danger { border-color: var(--red); color: var(--red); }
+    .btn.danger:hover { background: var(--red-soft); }
+    .btn.sm { min-height: 28px; padding: 0 9px; font-size: 11px; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .icon-btn { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--muted); font-size: 13px; }
+    .icon-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 11px; margin-bottom: 18px; }
+    .metric { border: 1px solid var(--line); border-radius: 9px; padding: 15px; background: var(--panel); box-shadow: var(--shadow); }
+    .metric-label { display: flex; justify-content: space-between; color: var(--muted); font-size: 11.5px; }
+    .metric-label span { color: var(--teal); }
+    .metric strong { display: block; margin-top: 9px; font-size: 23px; line-height: 1; }
+    .metric em { margin-left: 4px; color: var(--muted); font-size: 11px; font-style: normal; font-weight: 400; }
+
+    .panel { border: 1px solid var(--line); border-radius: 9px; background: var(--panel); box-shadow: var(--shadow); }
+    .panel + .panel { margin-top: 14px; }
+    .panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); padding: 14px 16px; }
+    .panel-head strong { font-size: 13.5px; }
+    .panel-head small { color: var(--muted); font-size: 11px; }
+    .panel-body { padding: 16px; }
+    .grid-2 { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(280px,.6fr); gap: 14px; }
+    .grid-even { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+
+    .field { display: block; }
+    .field > label { display: block; margin-bottom: 5px; color: var(--muted); font-size: 11px; }
+    .field input, .field select, .field textarea { width: 100%; min-height: 34px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; background: var(--panel-soft); font-size: 12px; outline: 0; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-soft); }
+    .field textarea { min-height: 150px; resize: vertical; font: 12.5px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .inline-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { flex: 0 0 auto; border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; background: var(--panel); color: var(--muted); font-size: 11.5px; }
+    .chip.active { border-color: var(--teal); background: var(--teal-soft); color: var(--teal); font-weight: 700; }
+    .tag { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; background: var(--panel-soft); color: var(--muted); font-size: 10px; }
+    .tag.q { border-color: var(--teal); background: var(--teal-soft); color: var(--teal); font-weight: 700; }
+
+    /* ---------- tables / lists ---------- */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; min-width: 860px; border-collapse: collapse; }
+    th { padding: 11px 14px; background: var(--panel-soft); color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: .04em; text-align: left; text-transform: uppercase; }
+    td { border-top: 1px solid var(--line); padding: 11px 14px; color: var(--muted); font-size: 12px; vertical-align: middle; }
+    tr:hover td { background: var(--panel-soft); }
+    .check { width: 15px; height: 15px; accent-color: var(--teal); vertical-align: middle; }
+    .song { display: flex; align-items: center; gap: 10px; min-width: 220px; }
+    .cover { display: grid; overflow: hidden; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 5px; background: #6b8bb5; color: #fff; font-size: 11px; font-weight: 800; }
+    .cover img { width: 100%; height: 100%; object-fit: cover; }
+    .cover.a { background: #b66d58; } .cover.b { background: #4d8082; } .cover.c { background: #657b9a; } .cover.d { background: #998150; } .cover.e { background: #88687e; }
+    .song-title { color: var(--ink); font-weight: 660; }
+    .song-meta { margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .status { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; white-space: nowrap; }
+    .status:before { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); content: ""; }
+    .status.loading { color: var(--teal); } .status.loading:before { background: var(--teal); box-shadow: 0 0 0 3px var(--teal-soft); }
+    .status.waiting { color: var(--amber); } .status.waiting:before { background: var(--amber); }
+    .status.error { color: var(--red); } .status.error:before { background: var(--red); }
+    .status.success { color: var(--green); } .status.success:before { background: var(--green); }
+    .row-actions { display: flex; gap: 4px; }
+    .empty { padding: 34px 18px; color: var(--muted); font-size: 12px; text-align: center; }
+    .list { display: grid; gap: 7px; }
+    .list-item { display: flex; align-items: center; gap: 11px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--panel); }
+    .list-item:hover { border-color: var(--teal); background: var(--panel-soft); }
+    .list-copy { min-width: 0; flex: 1; }
+    .list-copy strong { display: block; overflow: hidden; color: var(--ink); font-size: 12.5px; text-overflow: ellipsis; white-space: nowrap; }
+    .list-copy small { display: block; margin-top: 3px; overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .list-actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid var(--line); padding: 11px 16px; color: var(--muted); font-size: 11.5px; }
+    .pager-controls { display: flex; align-items: center; gap: 6px; }
+    .pager-controls select, .pager-controls input { min-height: 28px; border: 1px solid var(--line); border-radius: 6px; padding: 0 7px; background: var(--panel-soft); font-size: 11px; }
+    .pager-controls input { width: 56px; text-align: center; }
+
+    .step { border: 1px solid var(--line); border-radius: 8px; padding: 13px; background: var(--panel-soft); }
+    .step + .step { margin-top: 10px; }
+    .step-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px; }
+    .step-head strong { font-size: 12.5px; }
+    .state { display: inline-flex; align-items: center; gap: 5px; border-radius: 4px; padding: 2px 7px; background: var(--panel); color: var(--muted); font-size: 10.5px; }
+    .state.ok { background: var(--green-soft); color: var(--green); }
+    .state.warn { background: var(--amber-soft); color: var(--amber); }
+    .state.bad { background: var(--red-soft); color: var(--red); }
+
+    .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line); padding: 13px 16px; }
+    .setting-row:last-child { border-bottom: 0; }
+    .setting-copy { min-width: 0; flex: 1; }
+    .setting-copy strong { display: block; color: var(--ink); font-size: 12.5px; }
+    .setting-copy small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; white-space: pre-line; }
+    .setting-control { flex: 0 0 auto; width: 200px; }
+    .setting-control input, .setting-control select { width: 100%; min-height: 32px; border: 1px solid var(--line); border-radius: 6px; padding: 0 8px; background: var(--panel-soft); font-size: 11.5px; outline: 0; }
+    .setting-control input:disabled, .setting-control select:disabled { opacity: .55; }
+    .setting-row.dirty { background: var(--teal-soft); }
+    .setting-row.invalid .setting-control input, .setting-row.invalid .setting-control select { border-color: var(--red); }
+    .switch { position: relative; flex: 0 0 auto; width: 38px; height: 22px; border: 0; border-radius: 11px; background: #b8c6d8; }
+    .switch:after { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; content: ""; transition: transform .18s ease; }
+    .switch.on { background: var(--teal); } .switch.on:after { transform: translateX(16px); }
+    .switch:disabled { opacity: .5; }
+
+    /* ---------- player ---------- */
+    .player { position: fixed; right: 0; bottom: 0; left: 0; z-index: 18; display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding: 9px 18px; background: var(--panel); box-shadow: 0 -8px 24px rgba(20,45,78,.08); }
+    .player-copy { min-width: 0; flex: 0 0 210px; }
+    .player-copy strong { display: block; overflow: hidden; font-size: 12.5px; text-overflow: ellipsis; white-space: nowrap; }
+    .player-copy small { display: block; margin-top: 2px; overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .player-main { display: flex; flex: 1; align-items: center; gap: 10px; min-width: 0; }
+    .seek { flex: 1; min-width: 60px; height: 4px; accent-color: var(--teal); }
+    .player-time { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .player-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 6px; }
+
+    /* ---------- overlays ---------- */
+    .toasts { position: fixed; right: 18px; bottom: 84px; z-index: 60; display: grid; gap: 8px; max-width: min(360px, calc(100vw - 30px)); }
+    .toast { border: 1px solid var(--teal); border-radius: 8px; padding: 10px 13px; background: var(--panel); box-shadow: var(--shadow); color: var(--ink); font-size: 12px; animation: fade .16s ease; }
+    .toast.err { border-color: var(--red); color: var(--red); }
+    .toast.ok { border-color: var(--green); color: var(--green); }
+    .modal-root { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: rgba(15,35,62,.42); }
+    .modal { display: flex; overflow: hidden; flex-direction: column; width: min(720px, 100%); max-height: min(760px, calc(100vh - 40px)); border: 1px solid var(--line); border-radius: 10px; background: var(--panel); box-shadow: 0 24px 60px rgba(19,59,108,.28); }
+    .modal.wide { width: min(920px, 100%); }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line); padding: 14px 16px; }
+    .modal-head strong { font-size: 14px; }
+    .modal-body { overflow: auto; flex: 1; padding: 16px; font-size: 12.5px; }
+    .modal-foot { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--line); padding: 12px 16px; }
+    .lyric { max-height: 420px; margin: 0; overflow: auto; color: var(--muted); font: 12.5px/2 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; }
+    .qr { display: block; width: 190px; height: 190px; margin: 0 auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+
+    .login-view { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 22px; background: var(--paper); }
+    .login-card { width: min(390px, 100%); border: 1px solid var(--line); border-radius: 11px; padding: 28px; background: var(--panel); box-shadow: var(--shadow); }
+    .login-brand { display: flex; align-items: center; gap: 11px; margin-bottom: 24px; }
+    .login-brand .brand-mark { width: 42px; height: 42px; }
+    .login-card h2 { margin: 0 0 6px; font-size: 21px; }
+    .login-card p { margin: 0 0 20px; color: var(--muted); font-size: 12px; }
+    .login-field { display: block; margin-bottom: 13px; color: var(--muted); font-size: 11px; }
+    .login-field input { display: block; width: 100%; height: 42px; margin-top: 6px; border: 1px solid var(--line); border-radius: 7px; padding: 0 11px; background: var(--panel-soft); font-size: 13px; outline: 0; }
+    .login-field input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-soft); }
+    .login-error { min-height: 17px; margin-bottom: 6px; color: var(--red); font-size: 11px; }
+    .login-card .btn { width: 100%; height: 42px; }
+
+    .tabbar { position: fixed; right: 0; bottom: 0; left: 0; z-index: 19; display: none; border-top: 1px solid var(--line); background: var(--panel); padding-bottom: env(safe-area-inset-bottom); }
+    .tabbar button { display: flex; flex: 1; flex-direction: column; align-items: center; gap: 2px; border: 0; padding: 8px 2px; background: transparent; color: var(--muted); font-size: 10px; }
+    .tabbar button.active { color: var(--teal); }
+    .tabbar .nav-icon { font-size: 16px; }
+    .more-sheet { position: fixed; inset: 0; z-index: 40; display: grid; align-items: end; background: rgba(15,35,62,.4); }
+    .more-sheet .sheet { border-radius: 12px 12px 0 0; padding: 14px 14px calc(14px + env(safe-area-inset-bottom)); background: var(--panel); }
+    .more-sheet .sheet button { display: flex; width: 100%; align-items: center; gap: 10px; border: 0; border-radius: 8px; padding: 13px; background: transparent; color: var(--ink); font-size: 13px; text-align: left; }
+    .more-sheet .sheet button:hover { background: var(--panel-soft); }
+
+    @media (max-width: 1000px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .content { padding: 22px 18px 150px; }
+    }
+    @media (max-width: 720px) {
+      .topnav { gap: 10px; min-height: 54px; padding: 7px 13px; }
+      .brand { border-right: 0; padding-right: 0; }
+      .brand small { display: none; }
+      .topnav > .nav { display: none; }
+      .nav-spacer { flex: 1; }
+      .rate { font-size: 10px; }
+      .content { padding: 18px 13px 168px; }
+      h1 { font-size: 21px; }
+      .page-head { flex-direction: column; align-items: stretch; }
+      .head-actions .btn { flex: 1; }
+      .metrics { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+      .metric { padding: 12px; } .metric strong { font-size: 19px; }
+      .tabbar { display: flex; }
+      .player { bottom: calc(56px + env(safe-area-inset-bottom)); flex-wrap: wrap; padding: 8px 12px; }
+      .player-copy { flex: 1 1 100%; }
+      .player-main { flex: 1 1 100%; }
+      .toasts { right: 12px; bottom: 150px; left: 12px; }
+      .modal { max-height: calc(100vh - 30px); }
+      .setting-row { flex-direction: column; align-items: stretch; gap: 9px; }
+      .setting-control { width: 100%; }
+      .table-wrap table { min-width: 0; }
+      .table-wrap thead { display: none; }
+      .table-wrap tr { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; border-top: 1px solid var(--line); padding: 11px 12px; }
+      .table-wrap td { border: 0; padding: 0; }
+      .table-wrap td[data-col="check"] { grid-row: 1 / span 3; align-self: start; padding-top: 3px; }
+      .table-wrap td[data-col="song"] { min-width: 0; }
+      .table-wrap td[data-col="meta"], .table-wrap td[data-col="status"] { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+      .table-wrap td[data-col="actions"] { grid-column: 1 / -1; }
+      .table-wrap .row-actions { justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ============ login ============ -->
+  <div class="login-view" id="loginView" hidden>
+    <form class="login-card" id="loginForm">
+      <div class="login-brand"><div class="brand-mark">SQ</div><div><strong style="font-size:18px">SQMusic</strong><small style="display:block;margin-top:3px;color:var(--muted);font-size:11px">open source web</small></div></div>
+      <h2>登录音乐工作台</h2>
+      <p>使用现有 SQMusic 账号进入下载管理。</p>
+      <label class="login-field">账号<input name="username" autocomplete="username" required></label>
+      <label class="login-field">后端 API 地址<input name="apiBase" id="apiBaseInput" autocomplete="off" placeholder="含 /api，如 https://music.example.com/api（留空用同源 /api）"></label>
+      <label class="login-field">密码<input name="password" type="password" autocomplete="current-password" required></label>
+      <div class="login-error" id="loginError"></div>
+      <button class="btn primary" type="submit">登录</button>
+    </form>
+  </div>
+
+  <!-- ============ shell ============ -->
+  <header class="topnav">
+    <div class="brand"><div class="brand-mark">SQ</div><div><strong>SQMusic</strong><small id="brandVersion">new interface</small></div></div>
+    <nav class="nav" id="deskNav"></nav>
+    <div class="nav-spacer"></div>
+    <div class="top-actions">
+      <div class="rate" title="当前网络传输速率" id="rateBox" hidden>↓<b id="downRate">--</b> ↑<b id="upRate">--</b></div>
+      <button class="top-btn" id="themeBtn" title="切换主题">☾</button>
+      <button class="top-btn" id="logoutBtn" title="退出登录">⏻</button>
+      <div class="avatar" id="avatar">SQ</div>
+    </div>
+  </header>
+
+  <main class="content" id="content"></main>
+
+  <!-- ============ player ============ -->
+  <div class="player" id="player" hidden>
+    <div class="cover" id="playerCover">♪</div>
+    <div class="player-copy"><strong id="playerTitle">未播放</strong><small id="playerMeta">—</small></div>
+    <div class="player-main">
+      <button class="icon-btn" id="playToggle">▶</button>
+      <input class="seek" id="seek" type="range" min="0" max="1000" value="0" aria-label="播放进度">
+      <span class="player-time" id="playerTime">00:00 / 00:00</span>
+    </div>
+    <div class="player-actions">
+      <input class="seek" id="volume" type="range" min="0" max="100" value="80" style="width:70px" aria-label="音量">
+      <button class="btn sm" id="playerLyric">歌词</button>
+      <button class="icon-btn" id="playerClose" title="关闭播放器">×</button>
+    </div>
+    <audio id="audio" preload="none"></audio>
+  </div>
+
+  <nav class="tabbar" id="mobileNav"></nav>
+  <div class="toasts" id="toasts"></div>
+  <div id="modalHost"></div>
+
+  <script>
+  'use strict';
+  /* =====================================================================
+   * SQMusic new frontend — single file, no build.
+   * Backend contract notes (verified against v3.1.20):
+   *  - Every API call needs BOTH `Authorization: Bearer <token>` and
+   *    `sqmusic: <token>`. Missing `sqmusic` => 403 on music/monitor/
+   *    parser/download/expand/plug routes.
+   *  - Envelope: { code, msg, data }. code !== 200 => error.
+   * ===================================================================== */
+
+  const API_STORAGE_KEY = 'sqmusic_new_api_base';
+  function getApiBase() {
+    const v = (localStorage.getItem(API_STORAGE_KEY) || '').trim();
+    return v ? v.replace(/\/+$/, '') : '/api';
+  }
+  function setApiBase(v) {
+    const val = (v || '').trim().replace(/\/+$/, '');
+    if (val) localStorage.setItem(API_STORAGE_KEY, val);
+    else localStorage.removeItem(API_STORAGE_KEY);
+  }
+  let API = getApiBase();
+  const TOKEN_KEY = 'sqmusic_new_token';
+  const THEME_KEY = 'sqmusic_new_theme';
+  const PAGESIZE_KEY = 'sqmusic_new_pagesize';
+
+  const store = {
+    get token() { return localStorage.getItem(TOKEN_KEY) || ''; },
+    set token(v) { v ? localStorage.setItem(TOKEN_KEY, v) : localStorage.removeItem(TOKEN_KEY); }
+  };
+
+  /* ---------------------------------------------------------------- utils */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const COVER_CLASS = ['a', 'b', 'c', 'd', 'e'];
+  const coverOf = (i, text, pic) => pic
+    ? `<div class="cover"><img src="${esc(pic)}" alt="" loading="lazy" onerror="this.remove()"></div>`
+    : `<div class="cover ${COVER_CLASS[i % 5]}">${esc(String(text || '?').slice(0, 2))}</div>`;
+  const joinArtist = v => Array.isArray(v) ? v.join('、') : (v || '');
+  function fmtTime(sec) {
+    if (!Number.isFinite(sec) || sec < 0) return '00:00';
+    const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+  function fmtDuration(ms) {
+    const n = Number(ms);
+    if (!Number.isFinite(n) || n <= 0) return '';
+    return fmtTime(n > 10000 ? n / 1000 : n);
+  }
+
+  /* ------------------------------------------------------------- feedback */
+  function toast(message, kind = '') {
+    const el = document.createElement('div');
+    el.className = `toast ${kind}`;
+    el.textContent = message;
+    $('#toasts').append(el);
+    setTimeout(() => el.remove(), kind === 'err' ? 4200 : 2600);
+  }
+  const ok = m => toast(m, 'ok');
+  const err = m => toast(m, 'err');
+
+  /* In-page modal. No alert/confirm/prompt anywhere in this app. */
+  function modal({ title, body, actions = [], wide = false, onClose }) {
+    const host = document.createElement('div');
+    host.className = 'modal-root';
+    host.innerHTML = `<section class="modal${wide ? ' wide' : ''}" role="dialog" aria-modal="true">
+      <div class="modal-head"><strong>${esc(title)}</strong><button class="icon-btn" data-x>×</button></div>
+      <div class="modal-body"></div>
+      ${actions.length ? '<div class="modal-foot"></div>' : ''}
+    </section>`;
+    const bodyEl = $('.modal-body', host);
+    if (typeof body === 'string') bodyEl.innerHTML = body; else if (body) bodyEl.append(body);
+    const close = () => { host.remove(); onClose && onClose(); };
+    $('[data-x]', host).onclick = close;
+    host.addEventListener('click', e => { if (e.target === host) close(); });
+    const foot = $('.modal-foot', host);
+    actions.forEach(a => {
+      const b = document.createElement('button');
+      b.className = `btn ${a.kind || ''}`;
+      b.textContent = a.label;
+      b.onclick = () => a.onClick ? a.onClick({ close, body: bodyEl, button: b }) : close();
+      foot.append(b);
+    });
+    $('#modalHost').append(host);
+    return { host, body: bodyEl, close, setBody: html => { bodyEl.innerHTML = html; } };
+  }
+
+  function confirmBox(title, message, { danger = false, confirmLabel = '确定' } = {}) {
+    return new Promise(resolve => {
+      let done = false;
+      const m = modal({
+        title,
+        body: `<p style="margin:0;color:var(--muted);line-height:1.7">${esc(message)}</p>`,
+        actions: [
+          { label: '取消', onClick: ({ close }) => { done = true; close(); resolve(false); } },
+          { label: confirmLabel, kind: danger ? 'danger' : 'primary', onClick: ({ close }) => { done = true; close(); resolve(true); } }
+        ],
+        onClose: () => { if (!done) resolve(false); }
+      });
+      void m;
+    });
+  }
+
+  function promptBox(title, label, { value = '', placeholder = '', multiline = false } = {}) {
+    return new Promise(resolve => {
+      let done = false;
+      const field = multiline
+        ? `<label class="field"><span>${esc(label)}</span><textarea id="pmt" placeholder="${esc(placeholder)}">${esc(value)}</textarea></label>`
+        : `<label class="field"><span>${esc(label)}</span><input id="pmt" value="${esc(value)}" placeholder="${esc(placeholder)}"></label>`;
+      const m = modal({
+        title, body: field,
+        actions: [
+          { label: '取消', onClick: ({ close }) => { done = true; close(); resolve(null); } },
+          { label: '确定', kind: 'primary', onClick: ({ close, body }) => { done = true; const v = $('#pmt', body).value; close(); resolve(v); } }
+        ],
+        onClose: () => { if (!done) resolve(null); }
+      });
+      setTimeout(() => $('#pmt', m.body)?.focus(), 30);
+    });
+  }
+
+  /* ------------------------------------------------------------------ api */
+  async function request(path, { method = 'GET', body, raw = false } = {}) {
+    const headers = {};
+    const t = store.token;
+    if (t) { headers.Authorization = `Bearer ${t}`; headers.sqmusic = t; }
+    let payload;
+    if (body instanceof FormData) payload = body;
+    else if (body !== undefined) { headers['Content-Type'] = 'application/json'; payload = JSON.stringify(body); }
+    const res = await fetch(API + path, { method, headers, body: payload, credentials: 'include' });
+    if (res.status === 401 || res.status === 403) { onAuthLost(); throw new Error('登录状态已失效，请重新登录'); }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.msg || `请求失败 (${res.status})`);
+    if (data.code !== 200) {
+      if (data.code === 401) { onAuthLost(); }
+      throw new Error(data.msg || `请求失败 (code ${data.code})`);
+    }
+    return raw ? data : data.data;
+  }
+  const qs = obj => new URLSearchParams(Object.entries(obj).filter(([, v]) => v !== undefined && v !== null && v !== '')).toString();
+
+  const api = {
+    /* config */
+    login: (username, password) => request('/config/login', { method: 'POST', body: { username, password, device: 'web-new' } }),
+    logout: () => request('/config/logout', { method: 'POST', body: { device: 'web-new' } }),
+    isLogin: () => request('/config/isLogin'),
+    version: () => request('/config/version'),
+    getConfigList: () => request('/config/getConfigList'),
+    updateConfig: (configKey, configValue) => request('/config/updateConfig', { method: 'POST', body: { configKey, configValue } }),
+    getOption: () => request('/config/getOption'),
+    getCurrentNetwork: () => request('/config/getCurrentNetwork'),
+    importSongList: fd => request('/config/importSongList', { method: 'POST', body: fd }),
+    /* music */
+    searchSong: p => request(`/music/searchSong?${qs(p)}`),
+    searchArtist: p => request(`/music/searchArtist?${qs(p)}`),
+    searchAlbum: p => request(`/music/searchAlbum?${qs(p)}`),
+    searchTips: (plugName, keyword) => request(`/music/searchTips?${qs({ plugName, keyword })}`),
+    songInfoById: (id, plugName) => request(`/music/SongInfoById?${qs({ id, plugName })}`),
+    albumInfoById: (id, plugName) => request(`/music/albumInfoById?${qs({ id, plugName })}`),
+    artistAlbumById: (id, plugName) => request(`/music/artistAlbumById?${qs({ id, plugName })}`),
+    getLyric: (id, plugName) => request('/music/getLyric', { method: 'POST', body: { id, plugName } }),
+    getDownloadUrl: (song, brType) => request('/music/getDownloadUrl', { method: 'POST', body: withFormat({ ...song, brType }) }),
+    /* download */
+    downloadSong: (song, brType) => request('/download/downloadSong', { method: 'POST', body: withFormat({ ...song, brType }) }),
+    downloadAlbum: album => request('/download/downloadAlbum', { method: 'POST', body: withFormat({ ...album }) }),
+    downloadArtistAlbum: artist => request('/download/downloadArtistAlbum', { method: 'POST', body: withFormat({ ...artist }) }),
+    downloadParserText: text => request('/download/downloadParserText', { method: 'POST', raw: true, body: withFormat({ text }) }),
+    downloadParserUrl: (url, isAudioBook, bookName, artist) => request('/download/downloadParserUrl', { method: 'POST', raw: true, body: withFormat({ url, isAudioBook, bookName, artist }) }),
+    /* parser */
+    parserUrlInfo: url => request('/parser/parserUrlInfo', { method: 'POST', body: { url } }),
+    /* task */
+    taskList: p => request('/task/list', { method: 'POST', body: p }),
+    taskDel: id => request('/task/del', { method: 'POST', body: { id } }),
+    taskRefreshOne: id => request('/task/refreshTask', { method: 'POST', body: { id } }),
+    taskErrorRetryList: id => request('/task/errorTaskRetry', { method: 'POST', body: { id } }),
+    delErrorTask: () => request('/task/delErrorTask'),
+    delSuccessTask: () => request('/task/delSuccessTask'),
+    delWaitingTask: () => request('/task/delWaitingTask'),
+    againTask: () => request('/task/againTask'),
+    refreshAllTask: () => request('/task/refreshTask'),
+    /* monitor */
+    monitorList: () => request('/monitor/list'),
+    monitorAdd: payload => request('/monitor/add', { method: 'POST', body: payload }),
+    monitorDelete: id => request('/monitor/delete', { method: 'POST', body: { id } }),
+    /* aliyun */
+    aliAuthCode: () => request('/expand/ali/getAuthorizationCode', { method: 'POST' }),
+    aliConfirmCode: (code, code_verifier) => request('/expand/ali/getConfirmCode', { method: 'POST', body: { code, code_verifier } }),
+    aliCheckToken: () => request('/expand/ali/checkAccessToken'),
+    aliUserInfo: () => request('/expand/ali/getAndSetUserInfo'),
+    aliCheckFolder: path => request('/expand/ali/checkFolder', { method: 'POST', body: { path } }),
+    aliDefaultSavePath: () => request('/expand/ali/getDefaultSavePath'),
+    aliAutoCreateFolder: path => request('/expand/ali/autoCreateFolder', { method: 'POST', body: { path } }),
+    aliSyncOnce: () => request('/expand/ali/syncOnce'),
+    aliIncrementalSync: () => request('/expand/ali/incrementalSync'),
+    aliUploadFiles: () => request('/expand/ali/queryAllUploadFile'),
+    aliUploadTree: () => request('/expand/ali/queryAllUploadFileTree'),
+    /* plug */
+    kgWxQr: () => request('/plug/kg/getWxQrImage'),
+    kgWxQrStatus: () => request('/plug/kg/checkWxQrCodeStatus'),
+    kgRefreshToken: () => request('/plug/kg/refreshToken'),
+    kgSignIn: () => request('/plug/kg/signIn'),
+    qqQr: () => request('/plug/qqvip/getQrImage'),
+    qqWechatQr: () => request('/plug/qqvip/getWechatQrImage'),
+    qqQrStatus: () => request('/plug/qqvip/checkQrCodeStatus'),
+    qqRefreshCookie: () => request('/plug/qqvip/refreshQQvipCookie')
+  };
+
+  /* The backend honours a per-request `downloadFormat` override, same as the
+     original frontend (`sn()` in the old bundle). Empty => use server config. */
+  function withFormat(payload) {
+    const f = app.downloadFormat;
+    return f ? { ...payload, downloadFormat: f } : payload;
+  }
+
+  /* ------------------------------------------------------------ app state */
+  const PLUG_LABEL = { kw: '酷我', netease: '网易云', mg: '咪咕', qq: 'QQ音乐', qqvip: 'QQ音乐', kg: '酷狗', tidal: 'Tidal', aliyun: '阿里云盘' };
+  const plugLabel = v => PLUG_LABEL[v] || v || '未知';
+
+  const app = {
+    page: 'home',
+    plugins: [],            // [{label,value}] from getOption
+    configs: [],            // raw config list
+    configMap: {},
+    version: '',
+    downloadFormat: '',     // per-session quality override
+    trafficOn: false
+  };
+
+  const PAGES = [
+    { key: 'home', icon: '⌂', label: '首页' },
+    { key: 'search', icon: '⌕', label: '搜索' },
+    { key: 'downloads', icon: '↓', label: '下载' },
+    { key: 'monitor', icon: '◷', label: '监听' },
+    { key: 'parser', icon: '◫', label: '解析' },
+    { key: 'aliyun', icon: '☁', label: '云盘' },
+    { key: 'settings', icon: '⚙', label: '设置' }
+  ];
+  const MOBILE_PRIMARY = ['home', 'search', 'downloads', 'monitor'];
+
+  function renderNav() {
+    $('#deskNav').innerHTML = PAGES.map(p =>
+      `<button data-page="${p.key}" class="${app.page === p.key ? 'active' : ''}"><span class="nav-icon">${p.icon}</span><span>${p.label}</span></button>`).join('');
+    const rest = PAGES.filter(p => !MOBILE_PRIMARY.includes(p.key));
+    $('#mobileNav').innerHTML = MOBILE_PRIMARY.map(k => {
+      const p = PAGES.find(x => x.key === k);
+      return `<button data-page="${p.key}" class="${app.page === p.key ? 'active' : ''}"><span class="nav-icon">${p.icon}</span><span>${p.label}</span></button>`;
+    }).join('') + `<button data-more class="${rest.some(p => p.key === app.page) ? 'active' : ''}"><span class="nav-icon">⋯</span><span>更多</span></button>`;
+    $$('[data-page]').forEach(b => b.onclick = () => go(b.dataset.page));
+    $('[data-more]').onclick = () => openMoreSheet(rest);
+  }
+
+  function openMoreSheet(items) {
+    const host = document.createElement('div');
+    host.className = 'more-sheet';
+    host.innerHTML = `<div class="sheet">${items.map(p => `<button data-go="${p.key}"><span class="nav-icon">${p.icon}</span>${p.label}</button>`).join('')}</div>`;
+    host.addEventListener('click', e => { if (e.target === host) host.remove(); });
+    $$('[data-go]', host).forEach(b => b.onclick = () => { host.remove(); go(b.dataset.go); });
+    document.body.append(host);
+  }
+
+  const views = {};
+  let pageTimer = null;
+  function go(page) {
+    if (pageTimer) { clearInterval(pageTimer); pageTimer = null; }
+    app.page = page;
+    renderNav();
+    location.hash = page;
+    $('#content').innerHTML = '';
+    (views[page] || views.home)();
+    window.scrollTo({ top: 0 });
+  }
+
+  function onAuthLost() {
+    store.token = '';
+    $('#loginView').hidden = false;
+    if (pageTimer) { clearInterval(pageTimer); pageTimer = null; }
+  }
+
+  /* ================================================================= HOME */
+  views.home = async function () {
+    $('#content').innerHTML = `
+      <div class="page-head">
+        <div><h1>概览</h1><p class="subtitle">下载队列、插件与同步状态一览。</p></div>
+        <div class="head-actions">
+          <button class="btn" id="homeRefresh">↻ 刷新</button>
+          <button class="btn primary" id="homeToSearch">＋ 搜索并下载</button>
+        </div>
+      </div>
+      <div class="metrics" id="homeMetrics">
+        ${['全部任务', '正在下载', '等待中', '下载失败', '已完成'].map(l =>
+          `<div class="metric"><div class="metric-label">${l} <span>●</span></div><strong>--<em>首</em></strong></div>`).join('')}
+      </div>
+      <div class="grid-2">
+        <section class="panel">
+          <div class="panel-head"><div><strong>最近任务</strong><small>　最新 8 条</small></div><button class="btn sm" id="homeAllTasks">查看全部</button></div>
+          <div class="panel-body list" id="homeTasks"><div class="empty">加载中…</div></div>
+        </section>
+        <div>
+          <section class="panel">
+            <div class="panel-head"><strong>系统状态</strong></div>
+            <div class="panel-body list" id="homeStatus"><div class="empty">加载中…</div></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><div><strong>插件状态</strong><small>　来自设置项</small></div></div>
+            <div class="panel-body list" id="homePlugins"><div class="empty">加载中…</div></div>
+          </section>
+        </div>
+      </div>`;
+    $('#homeRefresh').onclick = () => views.home();
+    $('#homeToSearch').onclick = () => go('search');
+    $('#homeAllTasks').onclick = () => go('downloads');
+    await loadHomeData();
+    pageTimer = setInterval(loadHomeData, 15000);
+  };
+
+  async function loadHomeData() {
+    const statuses = [['all', '全部任务'], ['loading', '正在下载'], ['waiting', '等待中'], ['error', '下载失败'], ['success', '已完成']];
+    try {
+      const pages = await Promise.all(statuses.map(([s]) =>
+        api.taskList({ pageIndex: 1, pageSize: 1, ...(s === 'all' ? {} : { downloadStatus: s }) }).catch(() => ({ total: 0 }))));
+      const box = $('#homeMetrics');
+      if (box) box.innerHTML = statuses.map(([s, label], i) =>
+        `<div class="metric"><div class="metric-label">${label} <span>●</span></div><strong style="${s === 'error' ? 'color:var(--red)' : ''}">${pages[i]?.total ?? 0}<em>首</em></strong></div>`).join('');
+    } catch (e) { /* metrics are best-effort */ }
+
+    try {
+      const page = await api.taskList({ pageIndex: 1, pageSize: 8 });
+      const rows = page?.records || [];
+      const el = $('#homeTasks');
+      if (el) el.innerHTML = rows.length ? rows.map((t, i) => {
+        const [cls, text] = taskStatus(t.downloadStatus);
+        return `<div class="list-item">${coverOf(i, t.downloadArtistname)}
+          <div class="list-copy"><strong>${esc(t.downloadMusicname || '未命名歌曲')}</strong>
+          <small>${esc(t.downloadArtistname || '未知歌手')} · ${esc(plugLabel(t.downloadPlugName))} · ${esc(t.downloadTime || '')}</small></div>
+          <span class="status ${cls}">${text}</span></div>`;
+      }).join('') : '<div class="empty">还没有下载任务</div>';
+    } catch (e) { const el = $('#homeTasks'); if (el) el.innerHTML = `<div class="empty">加载失败：${esc(e.message)}</div>`; }
+
+    try {
+      const [monitors, aliToken, aliPath] = await Promise.all([
+        api.monitorList().catch(() => []),
+        api.aliCheckToken().catch(() => null),
+        api.aliDefaultSavePath().catch(() => '')
+      ]);
+      const el = $('#homeStatus');
+      const aliOpen = app.configMap['expand.aliyun.open']?.configValue === 'true';
+      if (el) el.innerHTML = [
+        ['后端版本', app.version || '未知'],
+        ['下载目录', app.configMap['system.download.path']?.configValue || '—'],
+        ['并发下载', app.configMap['system.download.num']?.configValue || '—'],
+        ['音频格式', app.configMap['system.download.file.audio.format']?.configValue || '—'],
+        ['监听歌单', `${(monitors || []).length} 个`],
+        ['阿里云同步', aliOpen ? (aliToken ? '已开启 · 授权有效' : '已开启 · 待授权') : '未开启'],
+        ['云盘目录', aliPath || '—']
+      ].map(([k, v]) => `<div class="list-item"><div class="list-copy"><strong>${esc(v)}</strong><small>${esc(k)}</small></div></div>`).join('');
+    } catch (e) { /* ignore */ }
+
+    const pl = $('#homePlugins');
+    if (pl) {
+      const plugKeys = [...new Set(app.configs.filter(c => /^plug\.[^.]+\.open$/.test(c.configKey)).map(c => c.configKey.split('.')[1]))];
+      pl.innerHTML = plugKeys.length ? plugKeys.map(name => {
+        const on = app.configMap[`plug.${name}.open`]?.configValue === 'true';
+        const searchable = app.plugins.some(p => p.value === name);
+        return `<div class="list-item"><div class="list-copy"><strong>${esc(plugLabel(name))}</strong>
+          <small>${on ? '已启用' : '已关闭'}${searchable ? ' · 可搜索' : ''}</small></div>
+          <span class="state ${on ? 'ok' : ''}">${on ? '启用' : '关闭'}</span></div>`;
+      }).join('') : '<div class="empty">没有插件配置</div>';
+    }
+  }
+
+  /* =============================================================== SEARCH */
+  const TASK_STATUS = {
+    loading: ['loading', '下载中'],
+    waiting: ['waiting', '等待下载'],
+    success: ['success', '下载成功'],
+    error: ['error', '下载失败'],
+    supplement: ['loading', '补充下载中'],
+    supplement_success: ['success', '补充成功']
+  };
+  const taskStatus = s => TASK_STATUS[s] || ['', s || '未知'];
+
+  const search = { kind: 'song', plug: 'ALL', keyword: '', pageIndex: 1, pageSize: 20, total: 0, records: [], loading: false, requestId: 0 };
+
+  views.search = function () {
+    $('#content').innerHTML = `
+      <div class="page-head">
+        <div><h1>音乐搜索</h1><p class="subtitle">多来源聚合搜索，支持试听、歌词与指定音质下载。</p></div>
+        <div class="head-actions">
+          <div class="field" style="min-width:180px"><label>下载音质偏好（本次会话）</label>
+            <select id="fmtSelect">
+              <option value="">跟随服务器设置</option>
+              <option value="auto">自动（最佳）</option>
+              <option value="flac">只下载 flac</option>
+              <option value="mp3">只下载 mp3</option>
+              <option value="ape">只下载 ape</option>
+              <option value="wav">只下载 wav</option>
+              <option value="m4a">只下载 m4a</option>
+              <option value="ogg">只下载 ogg</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <section class="panel">
+        <div class="panel-body">
+          <div style="position:relative">
+            <div class="field"><input id="kw" placeholder="输入歌曲名、歌手或专辑，回车搜索" autocomplete="off" style="min-height:44px;font-size:14px" value="${esc(search.keyword)}"></div>
+            <div id="tips" class="panel" style="position:absolute;z-index:9;left:0;right:0;top:100%;margin-top:4px;display:none"></div>
+          </div>
+          <div class="chips" style="margin:12px 0 8px" id="kindTabs">
+            ${[['song', '单曲'], ['artist', '歌手'], ['album', '专辑']].map(([k, l]) =>
+              `<button class="chip ${search.kind === k ? 'active' : ''}" data-kind="${k}">${l}</button>`).join('')}
+          </div>
+          <div class="chips" id="plugTabs"></div>
+        </div>
+        <div class="panel-body list" id="searchList" style="border-top:1px solid var(--line)"><div class="empty">输入关键词开始搜索</div></div>
+        <div class="pager" id="searchPager" hidden></div>
+      </section>`;
+
+    $('#fmtSelect').value = app.downloadFormat;
+    $('#fmtSelect').onchange = e => { app.downloadFormat = e.target.value; ok('已更新本次会话的下载音质偏好'); };
+    renderPlugTabs();
+    $$('#kindTabs [data-kind]').forEach(b => b.onclick = () => {
+      search.kind = b.dataset.kind; search.pageIndex = 1;
+      $$('#kindTabs .chip').forEach(x => x.classList.toggle('active', x === b));
+      if (search.keyword) runSearch();
+    });
+    const kw = $('#kw');
+    let tipTimer;
+    kw.oninput = () => {
+      clearTimeout(tipTimer);
+      const v = kw.value.trim();
+      if (!v) { $('#tips').style.display = 'none'; return; }
+      tipTimer = setTimeout(() => showTips(v), 320);
+    };
+    kw.onkeydown = e => {
+      if (e.key === 'Enter') { $('#tips').style.display = 'none'; search.keyword = kw.value.trim(); search.pageIndex = 1; runSearch(); }
+      if (e.key === 'Escape') $('#tips').style.display = 'none';
+    };
+    document.addEventListener('click', e => { if (!e.target.closest('#tips') && e.target !== kw) { const t = $('#tips'); if (t) t.style.display = 'none'; } });
+    if (search.keyword) runSearch();
+  };
+
+  function renderPlugTabs() {
+    const box = $('#plugTabs');
+    if (!box) return;
+    const list = [{ value: 'ALL', label: '综合（全部来源）' }, ...app.plugins];
+    box.innerHTML = list.map(p => `<button class="chip ${search.plug === p.value ? 'active' : ''}" data-plug="${esc(p.value)}">${esc(p.label)}</button>`).join('');
+    $$('[data-plug]', box).forEach(b => b.onclick = () => {
+      search.plug = b.dataset.plug; search.pageIndex = 1;
+      $$('.chip', box).forEach(x => x.classList.toggle('active', x === b));
+      if (search.keyword) runSearch();
+    });
+  }
+
+  async function showTips(keyword) {
+    try {
+      const plug = search.plug === 'ALL' ? (app.plugins[0]?.value || 'kw') : search.plug;
+      const tips = await api.searchTips(plug, keyword);
+      const box = $('#tips');
+      if (!box || !Array.isArray(tips) || !tips.length) { if (box) box.style.display = 'none'; return; }
+      box.innerHTML = tips.slice(0, 10).map(t => `<button class="btn" style="display:block;width:100%;justify-content:flex-start;border:0;border-radius:0" data-tip="${esc(t)}">${esc(t)}</button>`).join('');
+      box.style.display = 'block';
+      $$('[data-tip]', box).forEach(b => b.onclick = () => {
+        $('#kw').value = b.dataset.tip; box.style.display = 'none';
+        search.keyword = b.dataset.tip; search.pageIndex = 1; runSearch();
+      });
+    } catch (e) { /* tips are optional */ }
+  }
+
+  async function runSearch() {
+    const list = $('#searchList');
+    if (!list) return;
+    const requestId = ++search.requestId;
+    search.loading = true;
+    list.innerHTML = '<div class="empty">搜索中…</div>';
+    $('#searchPager').hidden = true;
+    const params = { keyword: search.keyword, pageIndex: search.pageIndex, pageSize: search.pageSize };
+    const call = { song: api.searchSong, artist: api.searchArtist, album: api.searchAlbum }[search.kind];
+    try {
+      let records = [];
+      let total = 0;
+      if (search.plug === 'ALL') {
+        const targets = app.plugins.length ? app.plugins : [{ value: 'kw' }];
+        const results = await Promise.all(targets.map(p =>
+          call({ ...params, plugName: p.value }).then(r => ({ p: p.value, r })).catch(() => ({ p: p.value, r: null }))));
+        const merged = [];
+        results.forEach(({ p, r }) => {
+          if (!r) return;
+          total += Number(r.searchTotal || 0);
+          (r.records || []).forEach(rec => merged.push({ ...rec, plugName: rec.plugName || p }));
+        });
+        // interleave sources so no single plugin dominates the top of the list
+        const byPlug = {};
+        merged.forEach(m => (byPlug[m.plugName] ||= []).push(m));
+        const keys = Object.keys(byPlug);
+        const ordered = [];
+        for (let i = 0; ordered.length < merged.length; i++) {
+          keys.forEach(k => { if (byPlug[k][i]) ordered.push(byPlug[k][i]); });
+          if (i > 200) break;
+        }
+        records = ordered;
+      } else {
+        const r = await call({ ...params, plugName: search.plug });
+        records = (r?.records || []).map(rec => ({ ...rec, plugName: rec.plugName || search.plug }));
+        total = Number(r?.searchTotal || records.length);
+      }
+      if (requestId === search.requestId) {
+        search.records = records;
+        search.total = total;
+        renderSearchList();
+      }
+    } catch (e) {
+      if (requestId === search.requestId) list.innerHTML = `<div class="empty">搜索失败：${esc(e.message)}</div>`;
+    } finally {
+      if (requestId === search.requestId) search.loading = false;
+    }
+  }
+
+  function renderSearchList() {
+    const list = $('#searchList');
+    if (!search.records.length) { list.innerHTML = '<div class="empty">没有找到匹配结果</div>'; return; }
+    list.innerHTML = search.records.map((r, i) => {
+      if (search.kind === 'song') {
+        const brs = Array.isArray(r.brTypes) ? r.brTypes : [];
+        return `<div class="list-item">${coverOf(i, r.name, r.pic)}
+          <div class="list-copy"><strong>${esc(r.name)}</strong>
+            <small>${esc(joinArtist(r.artistName) || '未知歌手')} · ${esc(r.albumName || '未标注专辑')} · ${esc(plugLabel(r.plugName))}${fmtDuration(r.duration) ? ' · ' + fmtDuration(r.duration) : ''}</small></div>
+          <div class="list-actions">
+            <select class="btn sm" data-br="${i}" style="padding:0 6px">${brs.length ? brs.map(b => `<option value="${esc(b)}">${esc(brLabel(b))}</option>`).join('') : '<option value="">默认音质</option>'}</select>
+            <button class="icon-btn" data-play="${i}" title="试听">▶</button>
+            <button class="icon-btn" data-lyric="${i}" title="歌词">♫</button>
+            <button class="btn sm primary" data-dl="${i}">下载</button>
+          </div></div>`;
+      }
+      if (search.kind === 'artist') {
+        return `<div class="list-item">${coverOf(i, r.artistName, r.pic)}
+          <div class="list-copy"><strong>${esc(r.artistName)}</strong>
+            <small>${esc(plugLabel(r.plugName))} · ${esc(r.total || '?')} 张专辑</small></div>
+          <div class="list-actions">
+            <button class="btn sm" data-artist="${i}">查看专辑</button>
+            <button class="btn sm primary" data-dlartist="${i}">下载全部专辑</button>
+          </div></div>`;
+      }
+      return `<div class="list-item">${coverOf(i, r.albumName, r.pic)}
+        <div class="list-copy"><strong>${esc(r.albumName)}</strong>
+          <small>${esc(joinArtist(r.artistName) || '未知歌手')} · ${esc(plugLabel(r.plugName))}</small></div>
+        <div class="list-actions">
+          <button class="btn sm" data-album="${i}">查看歌曲</button>
+          <button class="btn sm primary" data-dlalbum="${i}">下载专辑</button>
+        </div></div>`;
+    }).join('');
+
+    $$('[data-dl]', list).forEach(b => b.onclick = async () => {
+      const i = +b.dataset.dl, rec = search.records[i];
+      const br = $(`[data-br="${i}"]`, list)?.value || '';
+      b.disabled = true;
+      try { await api.downloadSong(rec, br); ok(`已加入下载：${rec.name}`); }
+      catch (e) { err(`加入下载失败：${e.message}`); }
+      finally { b.disabled = false; }
+    });
+    $$('[data-play]', list).forEach(b => b.onclick = () => {
+      const i = +b.dataset.play;
+      playSong(search.records[i], $(`[data-br="${i}"]`, list)?.value || '');
+    });
+    $$('[data-lyric]', list).forEach(b => b.onclick = () => openLyric(search.records[+b.dataset.lyric]));
+    $$('[data-artist]', list).forEach(b => b.onclick = () => openArtist(search.records[+b.dataset.artist]));
+    $$('[data-album]', list).forEach(b => b.onclick = () => openAlbum(search.records[+b.dataset.album]));
+    $$('[data-dlartist]', list).forEach(b => b.onclick = async () => {
+      const rec = search.records[+b.dataset.dlartist];
+      if (!await confirmBox('下载歌手全部专辑', `将按当前音质设置下载「${rec.artistName}」的全部专辑，任务量可能很大。`)) return;
+      try { await api.downloadArtistAlbum(rec); ok('已开始下载歌手全部专辑'); } catch (e) { err(`下载失败：${e.message}`); }
+    });
+    $$('[data-dlalbum]', list).forEach(b => b.onclick = async () => {
+      const rec = search.records[+b.dataset.dlalbum];
+      try { await api.downloadAlbum(rec); ok(`已开始下载专辑：${rec.albumName}`); } catch (e) { err(`下载失败：${e.message}`); }
+    });
+    renderSearchPager();
+  }
+
+  function brLabel(b) {
+    const m = String(b).match(/_(\w+)_(\d+)$/);
+    if (!m) return b;
+    return `${m[1].toUpperCase()} ${m[2]}`;
+  }
+
+  function renderSearchPager() {
+    const pager = $('#searchPager');
+    if (!pager) return;
+    pager.hidden = false;
+    const sourceCount = search.plug === 'ALL' ? Math.max(1, app.plugins.length) : 1;
+    const effectivePageSize = search.pageSize * sourceCount;
+    const pages = Math.max(1, Math.ceil(search.total / effectivePageSize) || 1);
+    pager.innerHTML = `<span>共 ${search.total || search.records.length} 条 · 第 ${search.pageIndex} / ${pages} 页${search.plug === 'ALL' ? '（聚合 ' + app.plugins.length + ' 个来源，每来源 ' + search.pageSize + ' 条）' : ''}</span>
+      <span class="pager-controls">
+        <select id="spSize">${[10, 20, 30, 50].map(n => `<option value="${n}" ${n === search.pageSize ? 'selected' : ''}>${n} 条/页</option>`).join('')}</select>
+        <button class="btn sm" id="spPrev" ${search.pageIndex <= 1 ? 'disabled' : ''}>上一页</button>
+        <input id="spJump" value="${search.pageIndex}">
+        <button class="btn sm" id="spGo">跳转</button>
+        <button class="btn sm" id="spNext" ${search.pageIndex >= pages ? 'disabled' : ''}>下一页</button>
+      </span>`;
+    $('#spSize').onchange = e => { search.pageSize = +e.target.value; search.pageIndex = 1; runSearch(); };
+    $('#spPrev').onclick = () => { search.pageIndex--; runSearch(); };
+    $('#spNext').onclick = () => { search.pageIndex++; runSearch(); };
+    $('#spGo').onclick = () => { const v = Math.max(1, Math.min(pages, +$('#spJump').value || 1)); search.pageIndex = v; runSearch(); };
+  }
+
+  async function openLyric(rec) {
+    const m = modal({ title: `歌词 · ${rec.name || rec.musicName || ''}`, body: '<div class="empty">加载中…</div>' });
+    try {
+      let text = null;
+      try { text = await api.getLyric(rec.id, rec.plugName); } catch (e) { /* fall through */ }
+      if (!text) {
+        const info = await api.songInfoById(rec.id, rec.plugName);
+        text = info?.musicLyric;
+      }
+      m.setBody(text ? `<pre class="lyric">${esc(text)}</pre>` : '<div class="empty">这首歌没有歌词</div>');
+    } catch (e) { m.setBody(`<div class="empty">歌词加载失败：${esc(e.message)}</div>`); }
+  }
+
+  async function openArtist(rec) {
+    const m = modal({ title: `${rec.artistName} 的专辑`, wide: true, body: '<div class="empty">加载中…</div>' });
+    try {
+      const data = await api.artistAlbumById(rec.artistid || rec.id, rec.plugName);
+      const albums = data?.albums || [];
+      m.setBody(albums.length ? `<div class="list">${albums.map((a, i) => `
+        <div class="list-item">${coverOf(i, a.albumName, a.albumImg)}
+          <div class="list-copy"><strong>${esc(a.albumName)}</strong><small>${esc(a.albumTime || '')} · ${esc(data.musicArtistsName || rec.artistName)}</small></div>
+          <div class="list-actions">
+            <button class="btn sm" data-open="${i}">歌曲</button>
+            <button class="btn sm primary" data-dl="${i}">下载专辑</button>
+          </div></div>`).join('')}</div>` : '<div class="empty">该歌手暂无专辑数据</div>');
+      $$('[data-dl]', m.body).forEach(b => b.onclick = async () => {
+        const a = albums[+b.dataset.dl];
+        try { await api.downloadAlbum(normalizeAlbum(a, rec)); ok(`已开始下载专辑：${a.albumName}`); }
+        catch (e) { err(`下载失败：${e.message}`); }
+      });
+      $$('[data-open]', m.body).forEach(b => b.onclick = () => {
+        const a = albums[+b.dataset.open];
+        openAlbum(normalizeAlbum(a, rec));
+      });
+    } catch (e) { m.setBody(`<div class="empty">获取歌手信息失败：${esc(e.message)}</div>`); }
+  }
+
+  /* artistAlbumById returns albumId/albumName; searchAlbum returns albumid.
+     Send both spellings so downloadAlbum works from either entry point. */
+  function normalizeAlbum(a, ctx = {}) {
+    const id = a.albumid ?? a.albumId;
+    return {
+      ...a, albumid: id, albumId: id,
+      albumName: a.albumName,
+      artistName: a.artistName ?? ctx.artistName,
+      artistid: a.artistid ?? a.albumArtistId ?? ctx.artistid,
+      pic: a.pic ?? a.albumImg,
+      plugName: a.plugName || ctx.plugName
+    };
+  }
+
+  async function openAlbum(rec) {
+    const m = modal({ title: rec.albumName || '专辑', wide: true, body: '<div class="empty">加载中…</div>' });
+    try {
+      const data = await api.albumInfoById(rec.albumid ?? rec.albumId, rec.plugName);
+      const musics = data?.musics || [];
+      m.setBody(`
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+          ${coverOf(0, data.albumName, data.albumImg)}
+          <div style="min-width:0"><strong>${esc(data.albumName || '')}</strong>
+            <div style="color:var(--muted);font-size:11px;margin-top:3px">${esc(data.albumArtist || '')} · ${esc(data.albumTime || '')} · ${musics.length} 首</div></div>
+          <button class="btn sm primary" id="dlAll" style="margin-left:auto">下载整张专辑</button>
+        </div>
+        ${musics.length ? `<div class="list">${musics.map((s, i) => `
+          <div class="list-item">${coverOf(i, s.musicName, s.musicImage)}
+            <div class="list-copy"><strong>${esc(s.musicName)}</strong><small>${esc(joinArtist(s.musicArtists))}${s.musicDuration ? ' · ' + fmtDuration(s.musicDuration) : ''}</small></div>
+            <div class="list-actions">
+              <button class="icon-btn" data-play="${i}" title="试听">▶</button>
+              <button class="btn sm" data-dl="${i}">下载</button>
+            </div></div>`).join('')}</div>` : '<div class="empty">该专辑暂无歌曲</div>'}`);
+      $('#dlAll', m.body).onclick = async () => {
+        try { await api.downloadAlbum(normalizeAlbum(rec)); ok('已开始下载整张专辑'); } catch (e) { err(`下载失败：${e.message}`); }
+      };
+      const toSong = s => ({
+        id: s.id, name: s.musicName, artistName: s.musicArtists, artistids: s.artistsIds,
+        albumName: s.musicAlbum, albumid: s.albumId, pic: s.musicImage,
+        duration: s.musicDuration ? s.musicDuration * 1000 : undefined,
+        plugName: rec.plugName, dataInfo: s.dataInfo
+      });
+      $$('[data-dl]', m.body).forEach(b => b.onclick = async () => {
+        const s = musics[+b.dataset.dl];
+        try { await api.downloadSong(toSong(s), ''); ok(`已加入下载：${s.musicName}`); } catch (e) { err(`加入下载失败：${e.message}`); }
+      });
+      $$('[data-play]', m.body).forEach(b => b.onclick = () => playSong(toSong(musics[+b.dataset.play]), ''));
+    } catch (e) { m.setBody(`<div class="empty">获取专辑信息失败：${esc(e.message)}</div>`); }
+  }
+
+  /* =============================================================== PLAYER */
+  const audio = $('#audio');
+  let current = null;
+  async function playSong(song, brType) {
+    try {
+      toast('正在获取播放地址…');
+      const res = await api.getDownloadUrl(song, brType);
+      if (!res?.url) throw new Error(res?.errorMsg || '该音质没有可用播放地址');
+      current = song;
+      $('#player').hidden = false;
+      $('#playerTitle').textContent = song.name || song.musicName || '未命名歌曲';
+      $('#playerMeta').textContent = `${joinArtist(song.artistName) || '未知歌手'} · ${plugLabel(song.plugName)}${res.bit ? ' · ' + res.bit + 'K' : ''}`;
+      const cov = $('#playerCover');
+      cov.innerHTML = song.pic ? `<img src="${esc(song.pic)}" alt="">` : '♪';
+      audio.src = res.url;
+      audio.volume = (+$('#volume').value) / 100;
+      await audio.play();
+      $('#playToggle').textContent = '❚❚';
+    } catch (e) { err(`播放失败：${e.message}`); }
+  }
+  $('#playToggle').onclick = () => { if (audio.paused) audio.play().catch(e => err(`播放失败：${e.message}`)); else audio.pause(); };
+  audio.onplay = () => $('#playToggle').textContent = '❚❚';
+  audio.onpause = () => $('#playToggle').textContent = '▶';
+  audio.ontimeupdate = () => {
+    if (!audio.duration) return;
+    $('#seek').value = String(Math.round(audio.currentTime / audio.duration * 1000));
+    $('#playerTime').textContent = `${fmtTime(audio.currentTime)} / ${fmtTime(audio.duration)}`;
+  };
+  audio.onerror = () => { if (audio.src) err('音频加载失败，可能是来源限制或需要 VIP'); };
+  $('#seek').oninput = e => { if (audio.duration) audio.currentTime = audio.duration * (+e.target.value) / 1000; };
+  $('#volume').oninput = e => { audio.volume = (+e.target.value) / 100; };
+  $('#playerLyric').onclick = () => current && openLyric(current);
+  $('#playerClose').onclick = () => { audio.pause(); audio.removeAttribute('src'); audio.load(); $('#player').hidden = true; current = null; };
+
+  /* ============================================================ DOWNLOADS */
+  const dl = {
+    status: 'all', pageIndex: 1, pageSize: +(localStorage.getItem(PAGESIZE_KEY) || 20),
+    total: 0, pages: 1, records: [], selected: new Set(), auto: true,
+    filters: { downloadMusicname: '', downloadArtistname: '', downloadAlbumname: '', downloadPlugName: '', downloadTimeStart: '', downloadTimeEnd: '' },
+    requestId: 0, metricsRequestId: 0
+  };
+
+  views.downloads = function () {
+    $('#content').innerHTML = `
+      <div class="page-head">
+        <div><h1>下载任务</h1><p class="subtitle">按状态与条件筛选队列，支持批量与单条重试。</p></div>
+        <div class="head-actions">
+          <button class="btn" id="advBtn">☷ 高级筛选</button>
+          <button class="btn" id="bulkBtn">⚙ 批量操作</button>
+          <button class="btn primary" id="dlRefresh">↻ 刷新</button>
+        </div>
+      </div>
+      <div class="metrics" id="dlMetrics"></div>
+      <section class="panel">
+        <div class="panel-head">
+          <div class="chips" id="statusTabs"></div>
+          <label style="display:flex;align-items:center;gap:6px;color:var(--muted);font-size:11px">
+            <input type="checkbox" class="check" id="autoRefresh" ${dl.auto ? 'checked' : ''}> 自动刷新 10 秒</label>
+        </div>
+        <div class="panel-body" id="advBox" hidden style="border-bottom:1px solid var(--line)">
+          <div class="inline-fields">
+            <label class="field"><span>歌曲名</span><input data-f="downloadMusicname" value="${esc(dl.filters.downloadMusicname)}"></label>
+            <label class="field"><span>歌手</span><input data-f="downloadArtistname" value="${esc(dl.filters.downloadArtistname)}"></label>
+            <label class="field"><span>专辑</span><input data-f="downloadAlbumname" value="${esc(dl.filters.downloadAlbumname)}"></label>
+            <label class="field"><span>来源插件</span><select data-f="downloadPlugName"></select></label>
+            <label class="field"><span>开始时间</span><input data-f="downloadTimeStart" type="date" value="${esc(dl.filters.downloadTimeStart)}"></label>
+            <label class="field"><span>结束时间</span><input data-f="downloadTimeEnd" type="date" value="${esc(dl.filters.downloadTimeEnd)}"></label>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:11px">
+            <button class="btn primary" id="applyFilter">应用筛选</button>
+            <button class="btn" id="resetFilter">重置</button>
+          </div>
+        </div>
+        <div class="panel-body" id="selBar" hidden style="border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="color:var(--muted);font-size:12px">已选 <b id="selCount">0</b> 项</span>
+          <button class="btn sm" id="selRetry">重新下载所选</button>
+          <button class="btn sm danger" id="selDelete">删除所选</button>
+          <button class="btn sm" id="selClear">取消选择</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th style="width:34px"><input class="check" type="checkbox" id="checkAll"></th>
+              <th>歌曲</th><th>来源</th><th>音质</th><th>状态</th><th>下载消息</th><th>时间</th><th></th>
+            </tr></thead>
+            <tbody id="taskRows"></tbody>
+          </table>
+          <div id="taskEmpty"></div>
+        </div>
+        <div class="pager" id="dlPager"></div>
+      </section>`;
+
+    $('#advBtn').onclick = () => { const b = $('#advBox'); b.hidden = !b.hidden; };
+    $('#bulkBtn').onclick = openBulkMenu;
+    $('#dlRefresh').onclick = () => loadTasks();
+    $('#autoRefresh').onchange = e => { dl.auto = e.target.checked; setupAuto(); };
+    $('#applyFilter').onclick = () => {
+      $$('#advBox [data-f]').forEach(i => dl.filters[i.dataset.f] = i.value.trim());
+      dl.pageIndex = 1; loadTasks();
+    };
+    $('#resetFilter').onclick = () => {
+      Object.keys(dl.filters).forEach(k => dl.filters[k] = '');
+      $$('#advBox [data-f]').forEach(i => i.value = '');
+      dl.pageIndex = 1; loadTasks();
+    };
+    $('#checkAll').onchange = e => {
+      dl.records.forEach(t => e.target.checked ? dl.selected.add(t.id) : dl.selected.delete(t.id));
+      renderTaskRows();
+    };
+    $('#selClear').onclick = () => { dl.selected.clear(); renderTaskRows(); };
+    $('#selDelete').onclick = () => bulkOnSelected('删除所选任务', '将删除选中的下载任务及其重试记录。', api.taskDel, true);
+    $('#selRetry').onclick = () => bulkOnSelected('重新下载所选', '选中的任务会重新进入等待队列。', api.taskRefreshOne, false);
+
+    const plugSel = $('#advBox [data-f="downloadPlugName"]');
+    plugSel.innerHTML = `<option value="">全部来源</option>` +
+      app.plugins.map(p => `<option value="${esc(p.value)}">${esc(p.label)}</option>`).join('') +
+      ['kg', 'qqvip'].filter(k => !app.plugins.some(p => p.value === k)).map(k => `<option value="${k}">${plugLabel(k)}</option>`).join('');
+    plugSel.value = dl.filters.downloadPlugName;
+
+    renderStatusTabs();
+    loadTasks();
+    setupAuto();
+  };
+
+  function setupAuto() {
+    if (pageTimer) { clearInterval(pageTimer); pageTimer = null; }
+    if (dl.auto && app.page === 'downloads') pageTimer = setInterval(() => loadTasks(true), 10000);
+  }
+
+  const STATUS_TABS = [['all', '全部'], ['loading', '下载中'], ['waiting', '等待下载'], ['success', '下载成功'], ['error', '下载失败'], ['supplement', '补充下载中'], ['supplement_success', '补充成功']];
+  function renderStatusTabs() {
+    const box = $('#statusTabs');
+    box.innerHTML = STATUS_TABS.map(([k, l]) => `<button class="chip ${dl.status === k ? 'active' : ''}" data-st="${k}">${l}</button>`).join('');
+    $$('[data-st]', box).forEach(b => b.onclick = () => {
+      dl.status = b.dataset.st; dl.pageIndex = 1; dl.selected.clear();
+      $$('.chip', box).forEach(x => x.classList.toggle('active', x === b));
+      loadTasks();
+    });
+  }
+
+  async function loadTasks(silent = false) {
+    if (!$('#taskRows')) return;
+    const requestId = ++dl.requestId;
+    if (!silent) $('#taskEmpty').innerHTML = '<div class="empty">加载中…</div>';
+    const body = {
+      pageIndex: dl.pageIndex, pageSize: dl.pageSize,
+      ...(dl.status === 'all' ? {} : { downloadStatus: dl.status }),
+      ...Object.fromEntries(Object.entries(dl.filters).filter(([, v]) => v))
+    };
+    try {
+      const page = await api.taskList(body);
+      if (requestId !== dl.requestId || app.page !== 'downloads' || !$('#taskRows')) return;
+      dl.records = page?.records || [];
+      dl.total = page?.total || 0;
+      dl.pages = page?.pages || 1;
+      renderTaskRows();
+      renderDlPager();
+      loadTaskMetrics();
+    } catch (e) {
+      if (requestId !== dl.requestId || app.page !== 'downloads' || !$('#taskRows')) return;
+      $('#taskEmpty').innerHTML = `<div class="empty">任务加载失败：${esc(e.message)}</div>`;
+    }
+  }
+
+  async function loadTaskMetrics() {
+    const box = $('#dlMetrics');
+    if (!box) return;
+    const requestId = ++dl.metricsRequestId;
+    const items = [['all', '全部任务'], ['loading', '下载中'], ['waiting', '等待下载'], ['error', '下载失败'], ['success', '下载成功']];
+    try {
+      const res = await Promise.all(items.map(([s]) =>
+        api.taskList({ pageIndex: 1, pageSize: 1, ...(s === 'all' ? {} : { downloadStatus: s }) }).then(r => r?.total || 0).catch(() => 0)));
+      if (requestId !== dl.metricsRequestId || app.page !== 'downloads' || !$('#dlMetrics')) return;
+      box.innerHTML = items.map(([s, l], i) =>
+        `<div class="metric"><div class="metric-label">${l} <span>●</span></div><strong style="${s === 'error' ? 'color:var(--red)' : ''}">${res[i]}<em>首</em></strong></div>`).join('');
+    } catch (e) { /* best effort */ }
+  }
+
+  function renderTaskRows() {
+    const tbody = $('#taskRows');
+    if (!tbody) return;
+    if (!dl.records.length) {
+      tbody.innerHTML = '';
+      $('#taskEmpty').innerHTML = '<div class="empty">没有符合条件的任务</div>';
+    } else {
+      $('#taskEmpty').innerHTML = '';
+      tbody.innerHTML = dl.records.map((t, i) => {
+        const [cls, text] = taskStatus(t.downloadStatus);
+        return `<tr>
+          <td data-col="check"><input class="check" type="checkbox" data-sel="${t.id}" ${dl.selected.has(t.id) ? 'checked' : ''}></td>
+          <td data-col="song"><div class="song">${coverOf(i, t.downloadArtistname)}
+            <div><div class="song-title">${esc(t.downloadMusicname || '未命名歌曲')}</div>
+            <div class="song-meta">${esc(t.downloadArtistname || '未知歌手')} · ${esc(t.downloadAlbumname || '未标注专辑')}</div></div></div></td>
+          <td data-col="meta">${esc(plugLabel(t.downloadPlugName))}</td>
+          <td data-col="meta"><span class="tag q">${esc(t.downloadBrType || '默认')}</span></td>
+          <td data-col="status"><span class="status ${cls}">${text}</span></td>
+          <td data-col="meta" style="max-width:230px"><span title="${esc(t.downloadMsg || '')}" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.downloadMsg || '')}</span></td>
+          <td data-col="meta">${esc(t.downloadTime || '')}</td>
+          <td data-col="actions"><div class="row-actions">
+            ${cls === 'error' ? `<button class="icon-btn" data-sub="${t.id}" title="查看错误重试子任务">≡</button>` : ''}
+            <button class="icon-btn" data-retry="${t.id}" title="重新下载">↻</button>
+            <button class="icon-btn" data-del="${t.id}" title="删除任务">×</button>
+          </div></td></tr>`;
+      }).join('');
+    }
+    $$('[data-sel]', tbody).forEach(c => c.onchange = () => {
+      const id = Number(c.dataset.sel);
+      c.checked ? dl.selected.add(id) : dl.selected.delete(id);
+      updateSelBar();
+    });
+    $$('[data-retry]', tbody).forEach(b => b.onclick = async () => {
+      if (!await confirmBox('重新下载', '该任务将重新进入等待队列。')) return;
+      try { await api.taskRefreshOne(Number(b.dataset.retry)); ok('已重新加入下载队列'); loadTasks(); }
+      catch (e) { err(`操作失败：${e.message}`); }
+    });
+    $$('[data-del]', tbody).forEach(b => b.onclick = async () => {
+      if (!await confirmBox('删除下载任务', '将同时删除该任务的重试子任务，不会删除已下载的文件。', { danger: true, confirmLabel: '删除' })) return;
+      try { await api.taskDel(Number(b.dataset.del)); ok('已删除'); loadTasks(); }
+      catch (e) { err(`删除失败：${e.message}`); }
+    });
+    $$('[data-sub]', tbody).forEach(b => b.onclick = () => showErrorSubTasks(Number(b.dataset.sub)));
+    const all = $('#checkAll');
+    if (all) all.checked = dl.records.length > 0 && dl.records.every(t => dl.selected.has(t.id));
+    updateSelBar();
+  }
+
+  function updateSelBar() {
+    const bar = $('#selBar');
+    if (!bar) return;
+    bar.hidden = dl.selected.size === 0;
+    if (!bar.hidden) $('#selCount').textContent = String(dl.selected.size);
+  }
+
+  async function bulkOnSelected(title, message, fn, danger) {
+    const ids = [...dl.selected];
+    if (!ids.length) return;
+    if (!await confirmBox(title, `${message}（共 ${ids.length} 项）`, { danger })) return;
+    let failed = 0;
+    for (const id of ids) { try { await fn(id); } catch (e) { failed++; } }
+    dl.selected.clear();
+    failed ? err(`完成，其中 ${failed} 项失败`) : ok('批量操作完成');
+    loadTasks();
+  }
+
+  /* IMPORTANT: /task/errorTaskRetry only QUERIES the retry sub-tasks.
+     It does NOT trigger a retry. Single retry = refreshTask{id};
+     retry every failed task = againTask. */
+  async function showErrorSubTasks(id) {
+    const m = modal({
+      title: '错误重试子任务', wide: true, body: '<div class="empty">加载中…</div>',
+      actions: [
+        { label: '关闭' },
+        {
+          label: '重新下载该任务', kind: 'primary', onClick: async ({ close }) => {
+            try { await api.taskRefreshOne(id); ok('已重新加入下载队列'); close(); loadTasks(); }
+            catch (e) { err(`操作失败：${e.message}`); }
+          }
+        }
+      ]
+    });
+    try {
+      const list = await api.taskErrorRetryList(id);
+      const rows = Array.isArray(list) ? list : (list ? [list] : []);
+      m.setBody(rows.length
+        ? `<p style="margin:0 0 10px;color:var(--muted)">以下为该任务在其他插件上的重试记录（仅查询，不会触发重试）。</p>
+           <div class="list">${rows.map((t, i) => {
+            const [cls, text] = taskStatus(t.downloadStatus);
+            return `<div class="list-item">${coverOf(i, t.downloadArtistname)}
+              <div class="list-copy"><strong>${esc(t.downloadMusicname || '未命名歌曲')}</strong>
+              <small>${esc(plugLabel(t.downloadPlugName))} · ${esc(t.downloadBrType || '')} · ${esc(t.downloadMsg || '')}</small></div>
+              <span class="status ${cls}">${text}</span></div>`;
+          }).join('')}</div>`
+        : '<div class="empty">没有错误重试子任务</div>');
+    } catch (e) { m.setBody(`<div class="empty">查询失败：${esc(e.message)}</div>`); }
+  }
+
+  function openBulkMenu() {
+    const items = [
+      ['清空全部待下载', '删除所有等待中的任务。', api.delWaitingTask, true],
+      ['重置全部下载中', '把所有下载中的任务重置为等待状态并重新下载。', api.refreshAllTask, false],
+      ['清空全部已完成', '删除所有成功任务记录，不会删除音乐文件。', api.delSuccessTask, true],
+      ['清空全部错误任务', '删除所有下载错误任务及其重试记录。', api.delErrorTask, true],
+      ['重新下载全部错误任务', '所有错误任务将重新加入等待队列。', api.againTask, false]
+    ];
+    const m = modal({
+      title: '批量操作', body: `<div class="list">${items.map((it, i) =>
+        `<div class="list-item"><div class="list-copy"><strong>${esc(it[0])}</strong><small>${esc(it[1])}</small></div>
+         <button class="btn sm ${it[3] ? 'danger' : 'primary'}" data-i="${i}">执行</button></div>`).join('')}</div>`,
+      actions: [{ label: '关闭' }]
+    });
+    $$('[data-i]', m.body).forEach(b => b.onclick = async () => {
+      const [title, msg, fn, danger] = items[+b.dataset.i];
+      if (!await confirmBox(title, msg + ' 确定执行此操作？', { danger })) return;
+      try { await fn(); ok('操作成功'); m.close(); loadTasks(); }
+      catch (e) { err(`操作失败：${e.message}`); }
+    });
+  }
+
+  function renderDlPager() {
+    const pager = $('#dlPager');
+    if (!pager) return;
+    pager.innerHTML = `<span>共 ${dl.total} 条 · 第 ${dl.pageIndex} / ${dl.pages} 页</span>
+      <span class="pager-controls">
+        <select id="dpSize">${[10, 20, 50, 100].map(n => `<option value="${n}" ${n === dl.pageSize ? 'selected' : ''}>${n} 条/页</option>`).join('')}</select>
+        <button class="btn sm" id="dpPrev" ${dl.pageIndex <= 1 ? 'disabled' : ''}>上一页</button>
+        <input id="dpJump" value="${dl.pageIndex}">
+        <button class="btn sm" id="dpGo">跳转</button>
+        <button class="btn sm" id="dpNext" ${dl.pageIndex >= dl.pages ? 'disabled' : ''}>下一页</button>
+      </span>`;
+    $('#dpSize').onchange = e => { dl.pageSize = +e.target.value; localStorage.setItem(PAGESIZE_KEY, dl.pageSize); dl.pageIndex = 1; loadTasks(); };
+    $('#dpPrev').onclick = () => { dl.pageIndex--; loadTasks(); };
+    $('#dpNext').onclick = () => { dl.pageIndex++; loadTasks(); };
+    $('#dpGo').onclick = () => { dl.pageIndex = Math.max(1, Math.min(dl.pages, +$('#dpJump').value || 1)); loadTasks(); };
+  }
+
+  /* ============================================================== MONITOR */
+  views.monitor = function () {
+    $('#content').innerHTML = `
+      <div class="page-head">
+        <div><h1>监听歌单</h1><p class="subtitle">定期检查歌单变化，自动把新增歌曲加入下载队列。</p></div>
+        <div class="head-actions"><button class="btn" id="monRefresh">↻ 刷新</button><button class="btn primary" id="monAdd">＋ 新增监听</button></div>
+      </div>
+      <section class="panel">
+        <div class="panel-head"><div><strong>全部监听</strong><small>　目前仅支持网易云歌单分享链接</small></div><span id="monCount" class="tag">0 个</span></div>
+        <div class="panel-body list" id="monList"><div class="empty">加载中…</div></div>
+      </section>`;
+    $('#monRefresh').onclick = loadMonitors;
+    $('#monAdd').onclick = openMonitorAdd;
+    loadMonitors();
+  };
+
+  async function loadMonitors() {
+    const box = $('#monList');
+    if (!box) return;
+    try {
+      const list = await api.monitorList() || [];
+      $('#monCount').textContent = `${list.length} 个`;
+      box.innerHTML = list.length ? list.map((m, i) => `
+        <div class="list-item">${coverOf(i, m.targetName, m.targetCover)}
+          <div class="list-copy"><strong>${esc(m.targetName || '未命名歌单')}</strong>
+            <small>${esc(plugLabel(m.plugName))} · ${esc(m.type || '')} · ${esc(m.targetCount ?? 0)} 首 · 更新 ${esc(m.updateTime || m.createTime || '')}</small></div>
+          <span class="state ${m.enabled === 'true' || m.enabled === '1' ? 'ok' : ''}">${m.enabled === 'true' || m.enabled === '1' ? '监听中' : '已停用'}</span>
+          <div class="list-actions">
+            <button class="btn sm" data-detail="${i}">详情</button>
+            <button class="btn sm danger" data-del="${m.id}">删除</button>
+          </div></div>`).join('') : '<div class="empty">还没有监听歌单，点右上角新增</div>';
+      $$('[data-del]', box).forEach(b => b.onclick = async () => {
+        if (!await confirmBox('删除监听', '确定要删除这个监听吗？', { danger: true, confirmLabel: '删除' })) return;
+        try { await api.monitorDelete(Number(b.dataset.del)); ok('删除成功'); loadMonitors(); }
+        catch (e) { err(`删除失败：${e.message}`); }
+      });
+      $$('[data-detail]', box).forEach(b => b.onclick = () => {
+        const m = list[+b.dataset.detail];
+        modal({
+          title: '监听详情', actions: [{ label: '关闭' }],
+          body: `<div class="list">${[
+            ['歌单名称', m.targetName], ['歌单 ID', m.targetId], ['歌单 URL', m.targetUrl],
+            ['插件名称', plugLabel(m.plugName)], ['类型', m.type], ['当前歌曲数量', m.targetCount],
+            ['创建时间', m.createTime], ['更新时间', m.updateTime], ['歌单描述', m.targetDesc || '无描述']
+          ].map(([k, v]) => `<div class="list-item"><div class="list-copy"><strong style="white-space:normal;word-break:break-all">${esc(v ?? '—')}</strong><small>${esc(k)}</small></div></div>`).join('')}</div>`
+        });
+      });
+    } catch (e) { box.innerHTML = `<div class="empty">加载失败：${esc(e.message)}</div>`; }
+  }
+
+  function openMonitorAdd() {
+    let parsed = null;
+    const m = modal({
+      title: '新增监听',
+      body: `<label class="field"><span>歌单 URL（目前仅支持网易云歌单分享）</span>
+          <input id="monUrl" placeholder="https://music.163.com/#/playlist?id=..."></label>
+        <div style="display:flex;gap:8px;margin-top:10px"><button class="btn primary" id="monParse">分析</button></div>
+        <div id="monPreview" style="margin-top:12px"></div>`,
+      actions: [
+        { label: '取消' },
+        {
+          label: '添加', kind: 'primary', onClick: async ({ close }) => {
+            if (!parsed) { err('请先分析 URL'); return; }
+            const payload = {
+              plugName: parsed.plugName || parsed.plugNmae || 'netease',
+              type: parsed.type, enabled: '1', targetId: parsed.id,
+              targetName: parsed.name, targetUrl: parsed.url, targetCount: parsed.count,
+              targetDesc: parsed.desc, targetCover: parsed.cover
+            };
+            try { await api.monitorAdd(payload); ok('添加成功'); close(); loadMonitors(); }
+            catch (e) { err(`添加失败：${e.message}`); }
+          }
+        }
+      ]
+    });
+    $('#monParse', m.body).onclick = async () => {
+      const url = $('#monUrl', m.body).value.trim();
+      if (!url) { err('请输入 URL'); return; }
+      const pv = $('#monPreview', m.body);
+      pv.innerHTML = '<div class="empty">分析中…</div>';
+      try {
+        parsed = await api.parserUrlInfo(url);
+        if (!parsed) throw new Error('未能解析出歌单信息');
+        pv.innerHTML = `<div class="step"><div class="step-head"><strong>歌单信息</strong><span class="state ok">解析成功</span></div>
+          <div class="list">${[
+            ['歌单名称', parsed.name], ['歌单 ID', parsed.id], ['类型', parsed.type],
+            ['插件', plugLabel(parsed.plugName || parsed.plugNmae)], ['歌曲数量', parsed.count], ['歌单描述', parsed.desc || '无描述']
+          ].map(([k, v]) => `<div class="list-item"><div class="list-copy"><strong style="white-space:normal">${esc(v ?? '—')}</strong><small>${esc(k)}</small></div></div>`).join('')}</div></div>`;
+      } catch (e) { parsed = null; pv.innerHTML = `<div class="empty">解析 URL 错误：${esc(e.message)}</div>`; }
+    };
+  }
+
+  /* =============================================================== PARSER */
+  views.parser = function () {
+    $('#content').innerHTML = `
+      <div class="page-head">
+        <div><h1>文本 / 链接解析</h1><p class="subtitle">粘贴歌曲文本或分享链接，批量识别并加入下载。</p></div>
+      </div>
+      <div class="grid-even">
+        <section class="panel">
+          <div class="panel-head"><div><strong>文本解析</strong><small>　每行一首「歌手 - 歌曲」</small></div><button class="btn sm" id="ptClear">清空</button></div>
+          <div class="panel-body">
+            <label class="field"><textarea id="ptText" placeholder="周杰伦 - 晴天&#10;陈奕迅 - 富士山下"></textarea></label>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:11px">
+              <span style="color:var(--muted);font-size:11px">已识别 <b id="ptCount">0</b> 行</span>
+              <button class="btn primary" id="ptGo">识别并下载</button>
+            </div>
+            <p style="color:var(--muted);font-size:11px;line-height:1.7;margin:10px 0 0">异步任务，解析下载后请到「下载任务」查看。每首识别大致需要 500 毫秒。</p>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><div><strong>链接 / 歌单解析</strong><small>　网易云歌单、单曲分享链接</small></div></div>
+          <div class="panel-body">
+            <label class="field"><span>分享链接</span><input id="puUrl" placeholder="https://music.163.com/#/playlist?id=..."></label>
+            <label style="display:flex;align-items:center;gap:7px;margin:11px 0;color:var(--muted);font-size:12px">
+              <input class="check" type="checkbox" id="puBook"> 按有声书类型下载</label>
+            <div class="inline-fields" id="puBookFields" hidden>
+              <label class="field"><span>书名</span><input id="puBookName"></label>
+              <label class="field"><span>作者</span><input id="puArtist"></label>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:11px">
+              <button class="btn" id="puParse">解析预览</button>
+              <button class="btn primary" id="puGo">解析并下载</button>
+            </div>
+            <div id="puPreview" style="margin-top:12px"></div>
+          </div>
+        </section>
+      </div>`;
+
+    const ta = $('#ptText');
+    const countLines = () => $('#ptCount').textContent = String(ta.value.split('\n').map(s => s.trim()).filter(Boolean).length);
+    ta.oninput = countLines;
+    $('#ptClear').onclick = () => { ta.value = ''; countLines(); };
+    $('#ptGo').onclick = async () => {
+      const text = ta.value.trim();
+      if (!text) { err('请输入解析的歌单信息'); return; }
+      const btn = $('#ptGo'); btn.disabled = true;
+      try { const r = await api.downloadParserText(text); ok(r?.msg || '操作成功'); }
+      catch (e) { err(`操作失败：${e.message}`); }
+      finally { btn.disabled = false; }
+    };
+    $('#puBook').onchange = e => $('#puBookFields').hidden = !e.target.checked;
+    $('#puParse').onclick = async () => {
+      const url = $('#puUrl').value.trim();
+      if (!url) { err('请输入 URL'); return; }
+      const pv = $('#puPreview');
+      pv.innerHTML = '<div class="empty">解析中…</div>';
+      try {
+        const info = await api.parserUrlInfo(url);
+        if (!info) throw new Error('未能解析出信息');
+        pv.innerHTML = `<div class="step"><div class="step-head"><strong>${esc(info.name || '解析结果')}</strong><span class="state ok">已识别</span></div>
+          <div style="color:var(--muted);font-size:11.5px;line-height:1.8">
+            类型：${esc(info.type || '—')}　·　歌曲数：${esc(info.count ?? '—')}　·　插件：${esc(plugLabel(info.plugName || info.plugNmae))}<br>
+            ${esc(info.desc || '')}</div></div>`;
+      } catch (e) { pv.innerHTML = `<div class="empty">解析失败：${esc(e.message)}</div>`; }
+    };
+    $('#puGo').onclick = async () => {
+      const url = $('#puUrl').value.trim();
+      if (!url) { err('请输入 URL'); return; }
+      const isBook = $('#puBook').checked;
+      const btn = $('#puGo'); btn.disabled = true;
+      try {
+        const r = await api.downloadParserUrl(url, isBook, isBook ? $('#puBookName').value.trim() : '', isBook ? $('#puArtist').value.trim() : '');
+        ok(r?.msg || '操作成功，请到下载任务查看');
+      } catch (e) { err(`操作失败：${e.message}`); }
+      finally { btn.disabled = false; }
+    };
+  };
+
+  /* =============================================================== ALIYUN */
+  views.aliyun = function () {
+    $('#content').innerHTML = `
+      <div class="page-head">
+        <div><h1>阿里云盘同步</h1><p class="subtitle">按步骤完成授权与目录配置，把下载好的音乐同步上云。</p></div>
+        <div class="head-actions"><button class="btn" id="aliReload">↻ 刷新状态</button></div>
+      </div>
+      <div class="grid-2">
+        <section class="panel">
+          <div class="panel-head"><strong>操作指引</strong></div>
+          <div class="panel-body" id="aliSteps"><div class="empty">加载中…</div></div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><div><strong>上传记录</strong><small>　queryAllUploadFile</small></div><button class="btn sm" id="aliFiles">刷新</button></div>
+          <div class="panel-body list" id="aliFileList"><div class="empty">暂无数据，请点击“刷新”按钮查询</div></div>
+        </section>
+      </div>`;
+    $('#aliReload').onclick = renderAliSteps;
+    $('#aliFiles').onclick = loadAliFiles;
+    renderAliSteps();
+  };
+
+  async function renderAliSteps() {
+    const box = $('#aliSteps');
+    if (!box) return;
+    box.innerHTML = '<div class="empty">加载中…</div>';
+    const cv = k => app.configMap[k]?.configValue || '';
+    let tokenOk = null, userInfo = null, defaultPath = '';
+    try { tokenOk = await api.aliCheckToken(); } catch (e) { tokenOk = null; }
+    try { defaultPath = await api.aliDefaultSavePath(); } catch (e) { defaultPath = ''; }
+    try { userInfo = await api.aliUserInfo(); } catch (e) { userInfo = null; }
+
+    const appid = cv('expand.aliyun.appid'), secret = cv('expand.aliyun.appsecret');
+    const folder = cv('expand.aliyun.folder.path') || defaultPath;
+    const mode = cv('expand.aliyun.sync.mode');
+    const open = cv('expand.aliyun.open') === 'true';
+    const modeOptions = parseOptions(app.configMap['expand.aliyun.sync.mode']?.configOptions);
+
+    box.innerHTML = `
+      <div class="step">
+        <div class="step-head"><strong>① AppID 配置</strong><span class="state ${appid && secret ? 'ok' : 'warn'}">${appid && secret ? '已配置' : '未配置'}</span></div>
+        <div class="inline-fields">
+          <label class="field"><span>AppID</span><input id="aliAppid" value="${esc(appid)}"></label>
+          <label class="field"><span>AppSecret</span><input id="aliSecret" type="password" value="${esc(secret)}"></label>
+        </div>
+        <div style="margin-top:9px"><button class="btn primary sm" id="aliSaveApp">保存 AppID</button></div>
+      </div>
+      <div class="step">
+        <div class="step-head"><strong>② 获取授权码链接</strong><span class="state">点击生成</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="aliGetAuth">获取授权链接</button></div>
+        <div id="aliAuthUrl" style="margin-top:8px;font-size:11.5px;color:var(--muted);word-break:break-all"></div>
+      </div>
+      <div class="step">
+        <div class="step-head"><strong>③ 授权码验证</strong><span class="state">回调后填入</span></div>
+        <div class="inline-fields">
+          <label class="field"><span>code</span><input id="aliCode" value="${esc(cv('expand.aliyun.code'))}"></label>
+          <label class="field"><span>code_verifier</span><input id="aliVerifier" value="${esc(cv('expand.aliyun.code_verifier'))}"></label>
+        </div>
+        <div style="margin-top:9px"><button class="btn primary sm" id="aliConfirm">验证授权码</button></div>
+      </div>
+      <div class="step">
+        <div class="step-head"><strong>④ 当前授权状态</strong><span class="state ${tokenOk ? 'ok' : 'bad'}">${tokenOk ? 'access_token 有效！' : 'access_token 无效或已过期'}</span></div>
+        <div style="color:var(--muted);font-size:11.5px">到期时间：${esc(cv('expand.aliyun.access_token.expire.time') || '未知')}</div>
+      </div>
+      <div class="step">
+        <div class="step-head"><strong>⑤ 用户信息</strong><span class="state ${userInfo ? 'ok' : 'warn'}">${userInfo ? '已获取' : '暂无用户信息'}</span></div>
+        <div style="color:var(--muted);font-size:11.5px">昵称：${esc(cv('expand.aliyun.nick.name') || '—')}　·　用户：${esc(cv('expand.aliyun.user.name') || '—')}</div>
+        <div style="margin-top:9px"><button class="btn sm" id="aliUser">获取用户信息</button></div>
+      </div>
+      <div class="step">
+        <div class="step-head"><strong>⑥ 保存位置设置</strong><span class="state ${folder ? 'ok' : 'warn'}">${folder ? '已设置' : '待设置'}</span></div>
+        <label class="field"><span>云盘目录（默认：${esc(defaultPath || '备份文件/SqMusic')}）</span><input id="aliFolder" value="${esc(folder)}"></label>
+        <div style="display:flex;gap:8px;margin-top:9px;flex-wrap:wrap">
+          <button class="btn sm" id="aliCheckFolder">检查目录</button>
+          <button class="btn sm" id="aliCreateFolder">自动创建</button>
+          <button class="btn primary sm" id="aliSaveFolder">保存路径</button>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-head"><strong>⑦ 同步模式</strong><span class="state ${mode ? 'ok' : 'warn'}">${mode ? '已选择' : '待选择'}</span></div>
+        <label class="field"><select id="aliMode"><option value="">请选择</option>${modeOptions.map(o => `<option value="${esc(o.value)}" ${o.value === mode ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select></label>
+        <div style="margin-top:9px"><button class="btn primary sm" id="aliSaveMode">保存同步模式</button></div>
+      </div>
+      <div class="step">
+        <div class="step-head"><strong>⑧ 同步开关</strong><span class="state ${open ? 'ok' : ''}">${open ? '已开启' : '已关闭'}</span></div>
+        <button class="switch ${open ? 'on' : ''}" id="aliSwitch" aria-label="同步开关"></button>
+      </div>
+      <div class="step">
+        <div class="step-head"><strong>⑨ 上传操作</strong><span class="state">手动触发</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn sm" id="aliFull">全量上传</button>
+          <button class="btn sm" id="aliInc">增量上传</button>
+        </div>
+        <p style="color:var(--muted);font-size:11px;line-height:1.7;margin:9px 0 0">全量上传：扫描整个下载目录上传。增量上传：仅上传新增的歌曲文件，速度快，适合日常使用。</p>
+      </div>`;
+
+    const saveCfg = async (key, value) => { await api.updateConfig(key, value); await reloadConfigs(); };
+    $('#aliSaveApp').onclick = async () => {
+      try {
+        await saveCfg('expand.aliyun.appid', $('#aliAppid').value.trim());
+        await saveCfg('expand.aliyun.appsecret', $('#aliSecret').value.trim());
+        ok('AppID 设置成功！');
+      } catch (e) { err(`保存 AppID 失败：${e.message}`); }
+    };
+    $('#aliGetAuth').onclick = async () => {
+      try {
+        const url = await api.aliAuthCode();
+        const target = typeof url === 'string' ? url : (url?.url || JSON.stringify(url));
+        $('#aliAuthUrl').innerHTML = target ? `<a href="${esc(target)}" target="_blank" rel="noopener">${esc(target)}</a>` : '未返回授权链接';
+        ok('授权 URL 已生成');
+        await reloadConfigs();
+      } catch (e) { err(`获取授权链接失败：${e.message}`); }
+    };
+    $('#aliConfirm').onclick = async () => {
+      try { await api.aliConfirmCode($('#aliCode').value.trim(), $('#aliVerifier').value.trim()); ok('授权成功！'); renderAliSteps(); }
+      catch (e) { err(`授权码验证失败：${e.message}`); }
+    };
+    $('#aliUser').onclick = async () => {
+      try { await api.aliUserInfo(); await reloadConfigs(); ok('已获取用户信息'); renderAliSteps(); }
+      catch (e) { err(`获取用户信息失败：${e.message}`); }
+    };
+    $('#aliCheckFolder').onclick = async () => {
+      const p = $('#aliFolder').value.trim();
+      try {
+        const r = await api.aliCheckFolder(p);
+        r ? ok('目录可用') : err('当前路径不可用，可点击「自动创建」');
+      } catch (e) { err(`检查失败：${e.message}`); }
+    };
+    $('#aliCreateFolder').onclick = async () => {
+      const p = $('#aliFolder').value.trim();
+      if (!await confirmBox('自动创建文件夹', `将在云盘创建目录「${p}」，是否继续？`)) return;
+      try { await api.aliAutoCreateFolder(p); ok('文件夹创建成功！'); }
+      catch (e) { err(`创建文件夹失败：${e.message}`); }
+    };
+    $('#aliSaveFolder').onclick = async () => {
+      try { await saveCfg('expand.aliyun.folder.path', $('#aliFolder').value.trim()); ok('已保存同步路径！'); }
+      catch (e) { err(`保存路径失败：${e.message}`); }
+    };
+    $('#aliSaveMode').onclick = async () => {
+      try { await saveCfg('expand.aliyun.sync.mode', $('#aliMode').value); ok('同步模式设置成功！'); }
+      catch (e) { err(`保存同步模式失败：${e.message}`); }
+    };
+    $('#aliSwitch').onclick = async () => {
+      const next = !open;
+      try { await saveCfg('expand.aliyun.open', String(next)); ok(next ? '同步已开启' : '同步已关闭'); renderAliSteps(); }
+      catch (e) { err(`切换同步开关失败：${e.message}`); }
+    };
+    $('#aliFull').onclick = async () => {
+      if (!await confirmBox('全量上传', '将扫描下载目录并把全部歌曲上传到阿里云盘，是否继续？')) return;
+      try { await api.aliSyncOnce(); ok('全量上传任务已启动！'); } catch (e) { err(`全量上传失败：${e.message}`); }
+    };
+    $('#aliInc').onclick = async () => {
+      if (!await confirmBox('增量上传', '增量上传将只上传新增的歌曲到阿里云盘，是否继续？')) return;
+      try { await api.aliIncrementalSync(); ok('增量上传任务已启动！'); } catch (e) { err(`增量上传失败：${e.message}`); }
+    };
+  }
+
+  async function loadAliFiles() {
+    const box = $('#aliFileList');
+    box.innerHTML = '<div class="empty">查询中…</div>';
+    try {
+      const files = await api.aliUploadFiles() || [];
+      box.innerHTML = files.length ? files.slice(0, 200).map((f, i) => `
+        <div class="list-item">${coverOf(i, f.fileName || f.name)}
+          <div class="list-copy"><strong>${esc(f.fileName || f.name || '未命名文件')}</strong>
+            <small>${esc(f.filePath || f.localPath || '')} ${f.uploadTime ? '· ' + esc(f.uploadTime) : ''}</small></div>
+          <span class="tag">${esc(f.fileSuffix || f.suffix || '')}</span></div>`).join('')
+        : '<div class="empty">暂无数据</div>';
+    } catch (e) { box.innerHTML = `<div class="empty">查询失败：${esc(e.message)}</div>`; }
+  }
+
+  /* ============================================================= SETTINGS */
+  const dirty = new Map();
+
+  function parseOptions(raw) {
+    if (!raw) return [];
+    try {
+      const p = JSON.parse(raw);
+      if (Array.isArray(p)) return p.map(o => typeof o === 'object' ? o : { label: o, value: o });
+    } catch (e) { /* not JSON — plain remark text, ignore */ }
+    return [];
+  }
+
+  const GROUP_ORDER = ['system', 'plug', 'expand'];
+  function groupOf(key) {
+    if (key.startsWith('system.')) return { g: 'system', name: '系统设置', sub: '' };
+    if (key.startsWith('plug.')) { const p = key.split('.')[1]; return { g: 'plug', name: `插件 · ${plugLabel(p)}`, sub: p }; }
+    if (key.startsWith('expand.aliyun.')) return { g: 'expand', name: '阿里云盘', sub: 'aliyun' };
+    return { g: 'expand', name: '其他设置', sub: '' };
+  }
+
+  views.settings = function () {
+    dirty.clear();
+    $('#content').innerHTML = `
+      <div class="page-head">
+        <div><h1>设置</h1><p class="subtitle">完整保留原版配置，仅提交被修改过的字段。</p></div>
+        <div class="head-actions">
+          <button class="btn" id="setReload">↻ 重新读取</button>
+          <button class="btn" id="setImport">导入歌单数据</button>
+          <button class="btn primary" id="setSave">保存修改 <span id="dirtyBadge" class="tag" hidden>0</span></button>
+        </div>
+      </div>
+      <section class="panel">
+        <div class="panel-head"><div><strong>插件登录与操作</strong><small>　二维码扫码、签到、刷新凭据</small></div></div>
+        <div class="panel-body grid-even" id="plugActions"></div>
+      </section>
+      <div id="settingGroups"></div>
+      <section class="panel">
+        <div class="panel-head"><strong>辅助功能</strong></div>
+        <div class="panel-body" style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="setTheme">切换主题</button>
+          <button class="btn" id="setPwa">安装应用到桌面</button>
+          <button class="btn danger" id="setLogout">退出登录</button>
+        </div>
+      </section>
+      <input type="file" id="importFile" accept=".json" hidden>`;
+
+    $('#setReload').onclick = async () => { await reloadConfigs(); views.settings(); ok('已重新读取设置'); };
+    $('#setSave').onclick = saveDirtyConfigs;
+    $('#setTheme').onclick = toggleTheme;
+    $('#setPwa').onclick = installPwa;
+    $('#setLogout').onclick = doLogout;
+    $('#setImport').onclick = () => $('#importFile').click();
+    $('#importFile').onchange = async e => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append('file', file);
+      try { await api.importSongList(fd); ok('配置导入成功!'); }
+      catch (er) { err(`配置导入失败：${er.message}`); }
+      finally { e.target.value = ''; }
+    };
+
+    renderPlugActions();
+    renderSettingGroups();
+  };
+
+  function renderSettingGroups() {
+    const visible = app.configs.filter(c => c.configShow !== 0 && c.configShow !== '0');
+    const buckets = new Map();
+    visible.forEach(c => {
+      const { g, name } = groupOf(c.configKey);
+      const k = `${GROUP_ORDER.indexOf(g)}|${name}`;
+      if (!buckets.has(k)) buckets.set(k, []);
+      buckets.get(k).push(c);
+    });
+    const sorted = [...buckets.entries()].sort((a, b) => a[0].localeCompare(b[0], 'zh'));
+    $('#settingGroups').innerHTML = sorted.map(([k, items]) => {
+      const name = k.split('|')[1];
+      return `<section class="panel"><div class="panel-head"><div><strong>${esc(name)}</strong><small>　${items.length} 项</small></div></div>
+        ${items.map(c => settingRow(c)).join('')}</section>`;
+    }).join('');
+    bindSettingControls();
+  }
+
+  function settingRow(c) {
+    const disabled = c.configDisabled === 1 || c.configDisabled === '1';
+    const key = esc(c.configKey);
+    let control;
+    if (c.configType === 'boolean') {
+      control = `<button class="switch ${c.configValue === 'true' ? 'on' : ''}" data-k="${key}" data-t="boolean" ${disabled ? 'disabled' : ''} aria-label="切换"></button>`;
+    } else if (c.configType === 'select') {
+      const opts = parseOptions(c.configOptions);
+      control = `<select data-k="${key}" data-t="select" ${disabled ? 'disabled' : ''}>
+        ${opts.length ? '' : '<option value="">该配置项没有有效的选项列表</option>'}
+        ${opts.map(o => `<option value="${esc(o.value)}" ${String(o.value) === String(c.configValue) ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select>`;
+    } else {
+      const type = c.configType === 'password' ? 'password' : c.configType === 'number' ? 'number' : 'text';
+      control = `<input type="${type}" ${c.configType === 'number' ? 'min="0"' : ''} data-k="${key}" data-t="${esc(c.configType)}" value="${esc(c.configValue ?? '')}" ${disabled ? 'disabled' : ''}>`;
+    }
+    return `<div class="setting-row" data-row="${key}">
+      <div class="setting-copy"><strong>${esc(c.configName || c.configKey)}</strong>
+        <small>${esc((c.configRemark || c.configKey).replace(/\/n/g, '\n'))}</small>
+        <small style="opacity:.6">${key}</small></div>
+      <div class="setting-control">${c.configType === 'boolean' ? '' : control}</div>
+      ${c.configType === 'boolean' ? control : ''}
+    </div>`;
+  }
+
+  function bindSettingControls() {
+    $$('#settingGroups [data-k]').forEach(el => {
+      const key = el.dataset.k;
+      const cfg = app.configMap[key];
+      const mark = value => {
+        const original = cfg?.configValue ?? '';
+        if (String(value) === String(original ?? '')) dirty.delete(key); else dirty.set(key, String(value));
+        el.closest('.setting-row').classList.toggle('dirty', dirty.has(key));
+        validateRow(el, cfg);
+        updateDirtyBadge();
+      };
+      if (el.dataset.t === 'boolean') {
+        el.onclick = () => { el.classList.toggle('on'); mark(el.classList.contains('on')); };
+      } else {
+        el.oninput = () => mark(el.value);
+        el.onchange = () => mark(el.value);
+      }
+    });
+    updateDirtyBadge();
+  }
+
+  function validateRow(el, cfg) {
+    const row = el.closest('.setting-row');
+    let msg = '';
+    const v = el.dataset.t === 'boolean' ? String(el.classList.contains('on')) : el.value;
+    if (cfg?.configNullCheck === 1 && dirty.has(cfg.configKey) && String(v).trim() === '') msg = '请填写内容';
+    if (cfg?.configType === 'number' && v !== '' && (!Number.isFinite(+v) || +v < 0)) msg = '数值类型必须大于等于 0';
+    row.classList.toggle('invalid', !!msg);
+    let hint = row.querySelector('.err-hint');
+    if (msg) {
+      if (!hint) { hint = document.createElement('small'); hint.className = 'err-hint'; hint.style.color = 'var(--red)'; row.querySelector('.setting-copy').append(hint); }
+      hint.textContent = msg;
+    } else if (hint) hint.remove();
+    return !msg;
+  }
+
+  function updateDirtyBadge() {
+    const badge = $('#dirtyBadge');
+    if (!badge) return;
+    badge.hidden = dirty.size === 0;
+    badge.textContent = String(dirty.size);
+  }
+
+  async function saveDirtyConfigs() {
+    if (!dirty.size) { toast('没有需要保存的修改'); return; }
+    let bad = false;
+    $$('#settingGroups [data-k]').forEach(el => { if (dirty.has(el.dataset.k) && !validateRow(el, app.configMap[el.dataset.k])) bad = true; });
+    if (bad) { err('存在校验不通过的配置项'); return; }
+    const btn = $('#setSave'); btn.disabled = true;
+    const entries = [...dirty.entries()];
+    let failed = [];
+    for (const [k, v] of entries) {
+      try { await api.updateConfig(k, v); } catch (e) { failed.push(`${k}: ${e.message}`); }
+    }
+    btn.disabled = false;
+    await reloadConfigs();
+    if (failed.length) { err(`修改失败：${failed[0]}`); }
+    else ok(`修改成功! 共 ${entries.length} 项`);
+    views.settings();
+  }
+
+  function renderPlugActions() {
+    const box = $('#plugActions');
+    const kgOn = app.configMap['plug.kg.open']?.configValue === 'true';
+    const qqOn = app.configMap['plug.qqvip.open']?.configValue === 'true';
+    box.innerHTML = `
+      <div class="step">
+        <div class="step-head"><strong>酷狗（kg）</strong><span class="state ${kgOn ? 'ok' : 'bad'}">${kgOn ? '插件已开启' : '插件未开启'}</span></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn sm" data-act="kgQr">① 获取微信二维码</button>
+          <button class="btn sm" data-act="kgStatus">② 检查扫码状态</button>
+          <button class="btn sm" data-act="kgSign">酷狗手动签到</button>
+          <button class="btn sm" data-act="kgToken">刷新登录信息</button>
+        </div>
+        <div style="color:var(--muted);font-size:11px;margin-top:8px">签到时间：${esc(app.configMap['plug.kg.sign.begin-end.time']?.configValue || '暂无签到信息请手动签到')}</div>
+      </div>
+      <div class="step">
+        <div class="step-head"><strong>QQ 音乐（qqvip）</strong><span class="state ${qqOn ? 'ok' : 'bad'}">${qqOn ? '插件已开启' : '插件未开启'}</span></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn sm" data-act="qqQr">① 手机 QQ 二维码</button>
+          <button class="btn sm" data-act="qqWx">① 微信二维码</button>
+          <button class="btn sm" data-act="qqStatus">② 检查扫码状态</button>
+          <button class="btn sm" data-act="qqCookie">刷新当前登录 cookie</button>
+        </div>
+        <div style="color:var(--muted);font-size:11px;margin-top:8px">注意区分手机QQ登录二维码和微信登录二维码。</div>
+      </div>`;
+    const showQr = async (title, fn, statusFn) => {
+      const m = modal({ title, body: '<div class="empty">获取中…</div>', actions: [{ label: '关闭' }, { label: '检查扫码状态', kind: 'primary', onClick: () => checkQr(statusFn) }] });
+      try {
+        const img = await fn();
+        const src = typeof img === 'string' ? img : (img?.qrCode || img?.image || '');
+        m.setBody(src ? `<img class="qr" src="${esc(src)}" alt="二维码"><p style="text-align:center;color:var(--muted);margin:10px 0 0">扫码后点「检查扫码状态」</p>` : '<div class="empty">未返回二维码</div>');
+      } catch (e) { m.setBody(`<div class="empty">获取失败：${esc(e.message)}</div>`); }
+    };
+    const checkQr = async fn => {
+      try {
+        const r = await fn();
+        const text = typeof r === 'string' ? r : JSON.stringify(r);
+        ok(`获取的状态是：${text}`);
+        await reloadConfigs();
+      } catch (e) { err(`扫码有点问题，重试一下或者检查下网络：${e.message}`); }
+    };
+    const acts = {
+      kgQr: () => showQr('酷狗微信二维码', api.kgWxQr, api.kgWxQrStatus),
+      kgStatus: () => checkQr(api.kgWxQrStatus),
+      kgSign: async () => { try { const r = await api.kgSignIn(); ok(`签到成功：${typeof r === 'string' ? r : JSON.stringify(r ?? '')}`); } catch (e) { err(`签到失败：${e.message}`); } },
+      kgToken: async () => { try { await api.kgRefreshToken(); ok('刷新成功'); } catch (e) { err(`刷新失败：${e.message}`); } },
+      qqQr: () => showQr('手机 QQ 登录二维码', api.qqQr, api.qqQrStatus),
+      qqWx: () => showQr('微信登录二维码', api.qqWechatQr, api.qqQrStatus),
+      qqStatus: () => checkQr(api.qqQrStatus),
+      qqCookie: async () => { try { await api.qqRefreshCookie(); ok('刷新成功'); } catch (e) { err(`刷新失败：${e.message}`); } }
+    };
+    $$('[data-act]', box).forEach(b => b.onclick = () => acts[b.dataset.act]());
+  }
+
+  /* ================================================================ chrome */
+  function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem(THEME_KEY, theme);
+    $('#themeBtn').textContent = theme === 'dark' ? '☀' : '☾';
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'dark' ? '#0b1420' : '#173f73');
+  }
+  function toggleTheme() {
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  }
+  $('#themeBtn').onclick = toggleTheme;
+
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; });
+  async function installPwa() {
+    if (!deferredPrompt) { toast('当前环境暂不支持安装或已安装'); return; }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    toast(outcome === 'accepted' ? '用户接受了PWA安装' : '用户拒绝了PWA安装');
+  }
+
+  async function doLogout() {
+    if (!await confirmBox('退出登录', '确定要退出当前账号吗？', { danger: true, confirmLabel: '退出' })) return;
+    try { await api.logout(); } catch (e) { /* token may already be gone */ }
+    store.token = '';
+    ok('退出成功');
+    onAuthLost();
+  }
+  $('#logoutBtn').onclick = doLogout;
+
+  /* --------------------------------------------------------------- boot */
+  $('#loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    const btn = e.currentTarget.querySelector('button');
+    btn.disabled = true;
+    $('#loginError').textContent = '';
+    try {
+      const base = (form.get('apiBase') || '').trim();
+      API = base ? base.replace(/\/+$/, '') : '/api';
+      const r = await api.login(form.get('username'), form.get('password'));
+      if (!r?.tokenValue) throw new Error('登录返回中没有 token');
+      setApiBase(base);
+      store.token = r.tokenValue;
+      $('#loginView').hidden = true;
+      await boot();
+    } catch (er) {
+      $('#loginError').textContent = er.message;
+    } finally { btn.disabled = false; }
+  });
+
+  async function reloadConfigs() {
+    const list = await api.getConfigList();
+    app.configs = Array.isArray(list) ? list : Object.values(list || {});
+    app.configMap = Object.fromEntries(app.configs.map(c => [c.configKey, c]));
+  }
+
+  async function loadNetworkRate() {
+    if (!app.trafficOn) { $('#rateBox').hidden = true; return; }
+    try {
+      const r = await api.getCurrentNetwork();
+      $('#rateBox').hidden = false;
+      $('#downRate').textContent = r?.downloadSpeedFormatted || r?.downloadSpeed || '--';
+      $('#upRate').textContent = r?.uploadSpeedFormatted || r?.uploadSpeed || '--';
+    } catch (e) { $('#downRate').textContent = '--'; $('#upRate').textContent = '--'; }
+  }
+
+  let rateTimer = null;
+  async function boot() {
+    try {
+      await reloadConfigs();
+    } catch (e) {
+      onAuthLost();
+      return;
+    }
+    app.trafficOn = app.configMap['system.show.traffic.monitoring']?.configValue === 'true';
+    try { app.plugins = await api.getOption() || []; } catch (e) { app.plugins = []; }
+    try { app.version = await api.version(); $('#brandVersion').textContent = `v${app.version} · web`; } catch (e) { /* ignore */ }
+    const account = app.configMap['system.login.account']?.configValue || 'SQ';
+    $('#avatar').textContent = account.slice(0, 2).toUpperCase();
+    renderNav();
+    const hash = location.hash.replace('#', '');
+    go(PAGES.some(p => p.key === hash) ? hash : 'home');
+    if (rateTimer) clearInterval(rateTimer);
+    loadNetworkRate();
+    if (app.trafficOn) rateTimer = setInterval(loadNetworkRate, 4000);
+  }
+
+  applyTheme(localStorage.getItem(THEME_KEY) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  // prefill saved backend API base on the login screen (empty when default /api)
+  { const ib = $('#apiBaseInput'); if (ib) ib.value = getApiBase() === '/api' ? '' : getApiBase(); }
+
+  /* PWA manifest is injected at runtime so the app stays a single file. */
+  (function injectManifest() {
+    const manifest = {
+      name: 'SQMusic', short_name: 'SQMusic', start_url: './', display: 'standalone',
+      background_color: '#f5f8fc', theme_color: '#173f73', scope: './',
+      icons: [{
+        src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%232f6fed'/%3E%3Ctext x='256' y='330' text-anchor='middle' font-family='Arial' font-size='200' font-weight='700' fill='%23ffffff'%3ESQ%3C/text%3E%3C/svg%3E",
+        sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable'
+      }]
+    };
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }));
+    document.head.append(link);
+  })();
+  if ('serviceWorker' in navigator) {
+    // sw.js is optional; registration failure must never break the app.
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+
+  window.addEventListener('hashchange', () => {
+    const h = location.hash.replace('#', '');
+    if (h && h !== app.page && PAGES.some(p => p.key === h)) go(h);
+  });
+
+  if (store.token) boot(); else $('#loginView').hidden = false;
+  </script>
+</body>
+</html>

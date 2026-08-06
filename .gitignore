@@ -1,0 +1,11 @@
+# OS
+.DS_Store
+
+# WorkBuddy internal state
+.workbuddy/
+.playwright-cli/
+
+# Dev previews (not the shipped frontend)
+ui-preview.html
+ui-preview*.png
+ui-*.png
