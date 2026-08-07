@@ -1,0 +1,62 @@
+# SQmusic UI Neo — embedded single-service deployment.
+#
+# The UI (frontend/index.html) is baked into the backend image by the
+# Dockerfile, so there is ONLY ONE application service: the backend serves
+# both the UI at "/" and the API at "/api" on port 8099 (same origin, no
+# reverse proxy, no CORS). The separate sqmusic_web front-end container from
+# the upstream compose is gone.
+#
+# Build & run:
+#   docker compose up -d --build
+#   # open http://<host>:8099/
+#
+# Change backend version:
+#   docker compose build --build-arg BACKEND_REF=3.0
+
+services:
+  sqmusic:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BACKEND_REF: "3.0"
+    image: sqmusic-ui-neo:embedded
+    container_name: sqmusic
+    # Single published port for both UI and API.
+    ports:
+      - "8099:8099"
+    environment:
+      - DB_IP=mysql
+      - DB_PORT=3306
+      - DB_NAME=sqmusicv3
+      - DB_USERNAME=root
+      - DB_PASSWORD=sqmusicv3password
+    volumes:
+      - ./music:/music
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - sq-app-network
+    restart: always
+
+  mysql:
+    image: mysql:5.7
+    container_name: sqmusic_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: sqmusicv3password
+      MYSQL_DATABASE: sqmusicv3
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - sq-app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+networks:
+  sq-app-network:
+    driver: bridge
